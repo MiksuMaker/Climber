@@ -57,8 +57,6 @@ public class PlayerInputs : MonoBehaviour
         inputComponent.moveValue = mostRecentMovementInput;
 
         moveVector = mostRecentMovementInput;
-
-        if (mostRecentMovementInput != Vector2.zero) { Debug.Log(mostRecentMovementInput); }
     }
 
     private void HandleLookInput()

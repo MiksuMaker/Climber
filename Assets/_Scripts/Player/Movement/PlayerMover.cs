@@ -6,11 +6,13 @@ public class PlayerMover : MonoBehaviour
 {
     #region Properties
     [SerializeField] PlayerInputObject inputComponent;
-
+    [SerializeField] GameObject head;
     Rigidbody rb;
 
     [SerializeField] float movementSpeed = 2f;
-    [SerializeField] float rotationSpeed = 2f;
+
+
+    [SerializeField] float mouseSensitivity = 10f;
     #endregion
 
     #region Setup
@@ -25,6 +27,11 @@ public class PlayerMover : MonoBehaviour
         HandleMovement(inputComponent.moveValue);
         HandleRotation(inputComponent.lookValue.x);
     }
+
+    private void Update()
+    {
+        HandleLooking(inputComponent.lookValue);
+    }
     #endregion
 
     #region Functions
@@ -34,18 +41,8 @@ public class PlayerMover : MonoBehaviour
 
         moveInput = moveInput.normalized;
 
-        //Vector3 changeVector = new Vector3(transform.right.x * moveInput.x,
-        //                                   0f,
-        //                                   transform.forward.z * moveInput.y)
-        //                                   * movementSpeed
-        //                                   * Time.fixedDeltaTime;
-
         Vector3 changeVector = transform.right * moveInput.x + transform.forward * moveInput.y;
         changeVector = changeVector * Time.deltaTime * movementSpeed;
-
-        Debug.Log(changeVector);
-        Debug.Log("Right: " + transform.right);
-        Debug.Log("Forward: " + transform.forward);
 
         Vector3 nextPos = transform.position + changeVector;
         rb.MovePosition(nextPos);
@@ -55,7 +52,19 @@ public class PlayerMover : MonoBehaviour
     {
         if (rotation == 0f) { return; }
 
-        transform.Rotate(Vector3.up * rotation * rotationSpeed);
+        transform.Rotate(Vector3.up * rotation * mouseSensitivity * Time.deltaTime);
+    }
+
+    private void HandleLooking(Vector2 lookInput)
+    {
+        if (lookInput == Vector2.zero) { return; }
+
+        float change = lookInput.y * mouseSensitivity * Time.deltaTime;
+        Vector3 pitch = new Vector3(head.transform.localEulerAngles.x - change,
+                                    0f,
+                                    0f);
+
+        head.transform.localRotation = Quaternion.Euler(pitch);
     }
     #endregion
 }

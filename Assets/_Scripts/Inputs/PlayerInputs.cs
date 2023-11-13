@@ -11,6 +11,8 @@ public class PlayerInputs : MonoBehaviour
     KeyCode backward = KeyCode.S;
     KeyCode right = KeyCode.D;
 
+    KeyCode jump = KeyCode.Space;
+
     string axisX = "Mouse X";
     string axisY = "Mouse Y";
 
@@ -42,6 +44,7 @@ public class PlayerInputs : MonoBehaviour
     {
         HandleMovementInputs();
         HandleLookInput();
+        HandleJumpingInput();
     }
 
     private void HandleMovementInputs()
@@ -52,11 +55,17 @@ public class PlayerInputs : MonoBehaviour
         if (Input.GetKey(left)) { mostRecentMovementInput += Vector2.left; }
         if (Input.GetKey(backward)) { mostRecentMovementInput += Vector2.down; }
         if (Input.GetKey(right)) { mostRecentMovementInput += Vector2.right; }
-
+        
         // Update PlayerInputComponent
         inputComponent.moveValue = mostRecentMovementInput;
 
         moveVector = mostRecentMovementInput;
+    }
+
+    private void HandleJumpingInput()
+    {
+        if (Input.GetKeyDown(jump)) { inputComponent.jumpValue = true; }
+        //if (Input.GetKeyUp(jump)) { inputComponent.jumpValue = false; }
     }
 
     private void HandleLookInput()
@@ -67,5 +76,6 @@ public class PlayerInputs : MonoBehaviour
         // Update PlayerInputComponent
         inputComponent.lookValue = new Vector2(mouseX, mouseY);
     }
+
     #endregion
 }

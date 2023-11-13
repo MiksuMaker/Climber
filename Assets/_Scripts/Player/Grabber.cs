@@ -38,7 +38,6 @@ public class Grabber : MonoBehaviour
         bool hitFound = false;
         Vector3 rayDir = head.transform.forward;
         Ray ray = new Ray(pos, rayDir);
-        //if (Physics.Raycast(pos, out hit, ray, grabDistance, grabbingLayerMask))
         if (Physics.Raycast(ray, out hit, grabDistance, grabbingLayerMask))
         {
             hitColor = Color.green;
@@ -57,6 +56,8 @@ public class Grabber : MonoBehaviour
         if (!hitFound) { crossHairObj.transform.position = head.transform.position; return; }
 
         crossHairObj.transform.position = hit.point;
+
+        Debug.DrawRay(crossHairObj.transform.position, hit.normal * 2f, Color.red, 0.1f);
     }
     #endregion
 }

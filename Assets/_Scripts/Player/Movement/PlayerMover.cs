@@ -7,6 +7,7 @@ public class PlayerMover : MonoBehaviour
     #region Properties
     [SerializeField] PlayerInputObject inputComponent;
     [SerializeField] GameObject head;
+    float headPitch = 0f;
     Rigidbody rb;
 
     [SerializeField] float movementSpeed = 2f;
@@ -60,12 +61,33 @@ public class PlayerMover : MonoBehaviour
     {
         if (lookInput == Vector2.zero) { return; }
 
-        float change = lookInput.y * mouseSensitivity * Time.deltaTime;
-        Vector3 pitch = new Vector3(head.transform.localEulerAngles.x - change,
-                                    0f,
-                                    0f);
+        //float change = lookInput.y * mouseSensitivity * Time.deltaTime;
+        //float pitchValue = head.transform.localEulerAngles.x - change;
 
-        head.transform.localRotation = Quaternion.Euler(pitch);
+        ////Debug.Log("Pitch: " + head.transform.localEulerAngles.x);
+        //float upPitchLimit = 250f;
+        //float downPitchLimit = 70f;
+
+        //if (!(pitchValue > upPitchLimit || pitchValue < downPitchLimit))
+        //{
+        //    Debug.Log("Outside");
+        //}
+        ////if (pitchValue < minPitch) { pitchValue = minPitch; Debug.Log("Smaller than min pitch"); }
+        ////else if (pitchValue > maxPitch) { pitchValue = maxPitch; Debug.Log("Bigger than Max value"); }
+        ////float pitchValue = Mathf.Clamp(head.transform.localEulerAngles.x - change, 60f, 70f);
+        ////Debug.Log(pitchValue);
+        //Vector3 pitch = new Vector3(pitchValue,
+        //                        0f,
+        //                        0f);
+
+        float max = 80f;
+        float min = -80f;
+
+        headPitch += lookInput.y * mouseSensitivity * Time.deltaTime;
+        headPitch = Mathf.Clamp(headPitch, min, max);
+        head.transform.localRotation = Quaternion.Euler(-headPitch, 0f, 0f);
+
+        //head.transform.localRotation = Quaternion.Euler(pitch);
     }
     #endregion
 }

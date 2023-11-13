@@ -20,16 +20,17 @@ public class PlayerMover : MonoBehaviour
     {
         // Fetch references
         rb = GetComponent<Rigidbody>();
+        Cursor.visible = false;
     }
 
     private void FixedUpdate()
     {
         HandleMovement(inputComponent.moveValue);
-        HandleRotation(inputComponent.lookValue.x);
     }
 
     private void Update()
     {
+        HandleRotation(inputComponent.lookValue.x);
         HandleLooking(inputComponent.lookValue);
     }
     #endregion

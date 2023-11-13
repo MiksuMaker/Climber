@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be1785ac14b1e374caadf79b942a4ecb, type: 3}
   m_Name: Player_Input
   m_EditorClassIdentifier: 
+  moveValue: {x: 0.1, y: 0}
+  lookValue: {x: 0.05, y: 0}

@@ -36,6 +36,8 @@ public class PlayerLooker : MonoBehaviour
 
     private void HandleLooking(Vector2 lookInput)
     {
+        //Debug.DrawRay(head.transform.position, head.transform.forward, Color.red, 0.1f);
+
         if (lookInput == Vector2.zero) { return; }
 
         float max = 80f;
@@ -44,6 +46,8 @@ public class PlayerLooker : MonoBehaviour
         headPitch += lookInput.y * mouseSensitivity * 100f * Time.deltaTime;
         headPitch = Mathf.Clamp(headPitch, min, max);
         head.transform.localRotation = Quaternion.Euler(-headPitch, 0f, 0f);
+
     }
     #endregion
+
 }

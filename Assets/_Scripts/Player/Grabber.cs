@@ -12,7 +12,6 @@ public class Grabber : MonoBehaviour
 
     int grabbingLayerMask;
 
-
     [Header("Grabbing")]
     [SerializeField] GameObject handGraphics;
     [SerializeField] float grabDistance = 5f;
@@ -20,8 +19,13 @@ public class Grabber : MonoBehaviour
     bool raycastHitWithinReach = false;
     RaycastHit rayHit;
 
-    Hand leftHand;
-    Hand rightHand;
+    public Hand leftHand;
+    public Hand rightHand;
+
+    [HideInInspector]
+    public bool isClimbing = false;
+    [HideInInspector]
+    public Vector3 center = Vector3.zero;
     #endregion
 
     #region Setup
@@ -84,16 +88,34 @@ public class Grabber : MonoBehaviour
         if (grabInput)
         {
             // Check if not currently grabbing AND if anything is in reach
-            if (!hand.grabbing && raycastHitWithinReach)
+            if (!hand.isGrabbing && raycastHitWithinReach)
             {
                 // Grab it with the hand
                 hand.PlaceHand(rayHit.point, rayHit.normal);
+                UpdateCurrentClimbCenter();
             }
         }
         else
         {
             // Ungrab it
             hand.UnplaceHand();
+            UpdateCurrentClimbCenter();
+        }
+    }
+
+    private void UpdateCurrentClimbCenter()
+    {
+        switch (leftHand.isGrabbing, rightHand.isGrabbing)
+        {
+            case (false, false): isClimbing = false; break;
+            case (true, false): isClimbing = true; center = leftHand.grabPos; break;
+            case (false, true): isClimbing = true; center = rightHand.grabPos; break;
+            case (true, true):
+                isClimbing = true;
+                center = leftHand.grabPos + ((rightHand.grabPos - leftHand.grabPos) / 2f);
+                //center = leftHand.grabPos;
+                Debug.DrawRay(center, Vector3.up, Color.magenta, 5f);
+                break;
         }
     }
     #endregion
@@ -102,8 +124,8 @@ public class Grabber : MonoBehaviour
 
 public class Hand
 {
-    public bool grabbing = false;
-    public Vector3 grabPos = Vector3.zero;
+    public bool isGrabbing = false;
+    public Vector3 grabPos { get { return graphics.transform.position; } }
     public GameObject graphics = null;
     public bool isLeftHand = true;
 
@@ -116,7 +138,7 @@ public class Hand
 
     public void PlaceHand(Vector3 placementPos, Vector3 normal)
     {
-        grabbing = true;
+        isGrabbing = true;
         graphics.SetActive(true);
         graphics.transform.position = placementPos;
         graphics.transform.up = normal;
@@ -126,7 +148,7 @@ public class Hand
 
     public void UnplaceHand()
     {
-        grabbing = false;
+        isGrabbing = false;
         graphics.SetActive(false);
     }
 }

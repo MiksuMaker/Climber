@@ -1793,6 +1793,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbb913dfec283b5468bf48f05fbb2445, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputComponent: {fileID: 11400000, guid: 9d5db5b7c9c68414b9588e7937733849, type: 2}
   head: {fileID: 717419546}
   crossHairObj: {fileID: 655034102}
+  handGraphics: {fileID: 3351875361229638032, guid: 91bad8a20dd06f349b4d7f4903cab623,
+    type: 3}
   grabDistance: 5

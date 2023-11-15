@@ -13,11 +13,6 @@ public class PlayerLooker : MonoBehaviour
     #endregion
 
     #region Setup
-    private void Start()
-    {
-        Cursor.visible = false;
-    }
-
     private void Update()
     {
         HandleRotation(inputComponent.lookValue.x);

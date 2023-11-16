@@ -148,9 +148,17 @@ public class Hand
         isGrabbing = true;
         graphics.SetActive(true);
         graphics.transform.position = placementPos;
-        graphics.transform.up = normal;
+        //graphics.transform.up = normal;
+        graphics.transform.rotation = CalcRotation(placementPos, normal);
 
         graphics.transform.localScale = isLeftHand ? new Vector3(1f, 1f, 1f) : new Vector3(-1f, 1f, 1f);
+    }
+
+    private Quaternion CalcRotation(Vector3 place, Vector3 normal)
+    {
+        Vector3 right = Vector3.Cross(normal, Camera.main.transform.forward);
+        Vector3 forward = Vector3.Cross(right, normal);
+        return Quaternion.LookRotation(forward.normalized, normal.normalized);
     }
 
     public void UnplaceHand()

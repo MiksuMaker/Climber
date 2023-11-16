@@ -1188,7 +1188,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 903166589}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.13, y: 6.635048, z: -4.87}
+  m_LocalPosition: {x: -2.13, y: 6.635048, z: -1.8699999}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2061,7 +2061,7 @@ MonoBehaviour:
   crossHairObj: {fileID: 655034102}
   handGraphics: {fileID: 3351875361229638032, guid: 91bad8a20dd06f349b4d7f4903cab623,
     type: 3}
-  grabDistance: 5
+  grabDistance: 4
   isClimbing: 0
   center: {x: 0, y: 0, z: 0}
 --- !u!114 &2108108906
@@ -2078,6 +2078,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxDist: 1
   minDist: 0
-  springForce: 10
-  damper: 5
+  springForce: 20
+  damper: 20
   massScale: 5
+  breakForce: 150

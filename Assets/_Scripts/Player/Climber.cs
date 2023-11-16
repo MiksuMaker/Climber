@@ -17,6 +17,8 @@ public class Climber : MonoBehaviour
     [SerializeField] float springForce = 5f;
     [SerializeField] float damper = 5f;
     [SerializeField] float massScale = 1f;
+    [Header("Extra")]
+    [SerializeField] float breakForce = 1f;
     //float passivePullStrength = 5f;
     //float pullVelocityMultiplier = 0.8f; 
 
@@ -26,7 +28,8 @@ public class Climber : MonoBehaviour
     //[Header("Springs")]
     SpringJoint leftSpring;
     SpringJoint rightSpring;
-
+    bool leftSpringIntact = false;
+    bool rightSpringIntact = false;
 
     #endregion
 
@@ -47,8 +50,7 @@ public class Climber : MonoBehaviour
         // Check grab status
         if (grabber.isClimbing)
         {
-            //CalculatePullValues();
-            //PullTowardsCenterOfGravity();
+            DetectBrokenSprings();
         }
     }
 
@@ -78,7 +80,7 @@ public class Climber : MonoBehaviour
         //{
         //    // Reel the Player in, keep them inside the maxPullRange
         //    float distanceOverRange = distanceOfPull - maxPullRange;
-            
+
         //    // Move the Player in the pull direction that much
         //    rb.MovePosition(transform.position + pullDir * distanceOverRange * pullVelocityMultiplier);
         //}
@@ -110,16 +112,40 @@ public class Climber : MonoBehaviour
         joint.spring = springForce;
         joint.damper = damper;
         joint.massScale = massScale;
+        joint.breakForce = breakForce;
 
         // Assign as known hand
-        if (isLeftHand) { leftSpring = joint; }
-        else { rightSpring = joint; }
+        if (isLeftHand) { leftSpring = joint; leftSpringIntact = true; }
+        else { rightSpring = joint; rightSpringIntact = true; }
     }
 
     private void DestroySpring(bool isLeftHand)
     {
-        if (isLeftHand) { if (leftSpring != null) { Destroy(leftSpring); } }
-        else { if (rightSpring != null) { Destroy(rightSpring); } }
+        if (isLeftHand) { if (leftSpring != null) { Destroy(leftSpring); leftSpringIntact = false; } }
+        else { if (rightSpring != null) { Destroy(rightSpring); rightSpringIntact = false; } }
+    }
+
+    private void DetectBrokenSprings()
+    {
+        bool broken = false;
+        string msg = "";
+        if (leftSpringIntact)
+        {
+            // Test if the spring is truly intact
+            if (leftSpring == null)
+            {
+                msg += "LEFT";
+                leftSpringIntact = false;
+                broken = true;
+            }
+        }
+        if (rightSpringIntact) { if (rightSpring == null) { msg += "RIGHT"; rightSpringIntact = false; broken = true; } }
+
+        if (broken)
+        {
+            msg += " has been broken at " + breakForce.ToString() + " force!";
+            Debug.Log(msg);
+        }
     }
     #endregion
 
@@ -128,7 +154,7 @@ public class Climber : MonoBehaviour
         // Draw a sphere around
         if (grabber != null && grabber.isClimbing)
         {
-            
+
         }
     }
 }

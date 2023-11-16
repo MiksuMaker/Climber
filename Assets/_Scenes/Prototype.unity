@@ -1698,6 +1698,7 @@ GameObject:
   - component: {fileID: 2108108903}
   - component: {fileID: 2108108904}
   - component: {fileID: 2108108905}
+  - component: {fileID: 2108108906}
   m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
@@ -1799,3 +1800,18 @@ MonoBehaviour:
   handGraphics: {fileID: 3351875361229638032, guid: 91bad8a20dd06f349b4d7f4903cab623,
     type: 3}
   grabDistance: 5
+  isClimbing: 0
+  center: {x: 0, y: 0, z: 0}
+--- !u!114 &2108108906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2108108899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7370f3d4490a47468d2504074519136, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  passivePullStrength: 5

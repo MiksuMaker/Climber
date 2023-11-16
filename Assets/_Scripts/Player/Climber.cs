@@ -12,12 +12,22 @@ public class Climber : MonoBehaviour
     float distanceOfPull = 0f;
 
     [Header("Climbing Specs")]
-    [SerializeField] float passivePullStrength = 5f;
-    [SerializeField, Range(0f, 1f)] float pullVelocityMultiplier = 0.8f; 
+    [SerializeField] float maxDist = 1f;
+    [SerializeField] float minDist = 0f;
+    [SerializeField] float springForce = 5f;
+    [SerializeField] float damper = 5f;
+    [SerializeField] float massScale = 1f;
+    //float passivePullStrength = 5f;
+    //float pullVelocityMultiplier = 0.8f; 
 
-    [Header("Distances")]
-    [SerializeField] float passivePullRange = 2f; // Range which within there is no passive pull
-    [SerializeField] float maxPullRange = 3f;     // Keep the distance
+    float passivePullRange = 2f; // Range which within there is no passive pull
+    float maxPullRange = 3f;     // Keep the distance
+
+    //[Header("Springs")]
+    SpringJoint leftSpring;
+    SpringJoint rightSpring;
+
+
     #endregion
 
     #region Setup
@@ -25,6 +35,10 @@ public class Climber : MonoBehaviour
     {
         grabber = GetComponent<Grabber>();
         rb = GetComponent<Rigidbody>();
+
+        // Assign delegates
+        grabber.OnGrab += CreateSpring;
+        grabber.OnRelease += DestroySpring;
     }
     #endregion
 
@@ -33,12 +47,12 @@ public class Climber : MonoBehaviour
         // Check grab status
         if (grabber.isClimbing)
         {
-            CalculatePullValues();
-            PullTowardsCenterOfGravity();
+            //CalculatePullValues();
+            //PullTowardsCenterOfGravity();
         }
     }
 
-    #region Climbing
+    #region Climbing V1
     private void CalculatePullValues()
     {
         // Calculate the direction of pull
@@ -60,18 +74,52 @@ public class Climber : MonoBehaviour
 
         //}
         //else 
-        if (distanceOfPull > maxPullRange)
-        {
-            // Reel the Player in, keep them inside the maxPullRange
-            float distanceOverRange = distanceOfPull - maxPullRange;
+        //if (distanceOfPull > maxPullRange)
+        //{
+        //    // Reel the Player in, keep them inside the maxPullRange
+        //    float distanceOverRange = distanceOfPull - maxPullRange;
             
-            // Move the Player in the pull direction that much
-            rb.MovePosition(transform.position + pullDir * distanceOverRange * pullVelocityMultiplier);
-        }
+        //    // Move the Player in the pull direction that much
+        //    rb.MovePosition(transform.position + pullDir * distanceOverRange * pullVelocityMultiplier);
+        //}
         // If player is close enough, do nothing
 
         // Pull the Player towards the center
         //rb.MovePosition(transform.position + pullDir * passivePullStrength * Time.fixedDeltaTime);
+    }
+    #endregion
+
+    #region Climbing V2
+
+    #endregion
+
+    #region Springs
+    private void CreateSpring(Vector3 anchorPoint, bool isLeftHand)
+    {
+        // Destroy the previous joint if there is any
+        DestroySpring(isLeftHand);
+
+        // Create new spring joint
+        SpringJoint joint = gameObject.AddComponent<SpringJoint>();
+        joint.autoConfigureConnectedAnchor = false;
+        joint.connectedAnchor = anchorPoint;
+
+        joint.maxDistance = maxDist; joint.minDistance = minDist;
+
+        // Spring values
+        joint.spring = springForce;
+        joint.damper = damper;
+        joint.massScale = massScale;
+
+        // Assign as known hand
+        if (isLeftHand) { leftSpring = joint; }
+        else { rightSpring = joint; }
+    }
+
+    private void DestroySpring(bool isLeftHand)
+    {
+        if (isLeftHand) { if (leftSpring != null) { Destroy(leftSpring); } }
+        else { if (rightSpring != null) { Destroy(rightSpring); } }
     }
     #endregion
 
@@ -80,16 +128,7 @@ public class Climber : MonoBehaviour
         // Draw a sphere around
         if (grabber != null && grabber.isClimbing)
         {
-            float dist = (grabber.center - transform.position).magnitude;
-
-            if (dist < passivePullRange) 
-            {
-                //Gizmos.Draw
-            }
-            else if (dist < maxPullRange) 
-            {
-
-            }
+            
         }
     }
 }

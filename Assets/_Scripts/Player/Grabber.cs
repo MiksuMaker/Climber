@@ -5,6 +5,11 @@ using UnityEngine;
 public class Grabber : MonoBehaviour
 {
     #region Properties
+    public delegate void OnHandGrab(Vector3 pos, bool isLeftHand);
+    public OnHandGrab OnGrab;
+    public delegate void OnHandRelease(bool isLeftHand);
+    public OnHandRelease OnRelease;
+
     [SerializeField]
     PlayerInputObject inputComponent;
     [SerializeField] GameObject head;
@@ -93,6 +98,7 @@ public class Grabber : MonoBehaviour
                 // Grab it with the hand
                 hand.PlaceHand(rayHit.point, rayHit.normal);
                 UpdateCurrentClimbCenter();
+                OnGrab?.Invoke(hand.grabPos, hand.isLeftHand);
             }
         }
         else
@@ -100,6 +106,7 @@ public class Grabber : MonoBehaviour
             // Ungrab it
             hand.UnplaceHand();
             UpdateCurrentClimbCenter();
+            OnRelease?.Invoke(hand.isLeftHand);
         }
     }
 

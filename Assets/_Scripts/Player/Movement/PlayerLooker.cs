@@ -13,6 +13,16 @@ public class PlayerLooker : MonoBehaviour
     #endregion
 
     #region Setup
+    private void Start()
+    {
+        inputComponent.sensitivityUpdate += UpdateSensitivity;
+    }
+
+    private void OnDestroy()
+    {
+        inputComponent.sensitivityUpdate -= UpdateSensitivity;
+    }
+
     private void Update()
     {
         HandleRotation(inputComponent.lookValue.x);
@@ -42,6 +52,14 @@ public class PlayerLooker : MonoBehaviour
         headPitch = Mathf.Clamp(headPitch, min, max);
         head.transform.localRotation = Quaternion.Euler(-headPitch, 0f, 0f);
 
+    }
+
+    private void UpdateSensitivity(int input)
+    {
+        mouseSensitivity += input;
+
+        if (mouseSensitivity < 1f) { mouseSensitivity = 1f; }
+        else if (mouseSensitivity > 20f) { mouseSensitivity = 20f; }
     }
     #endregion
 

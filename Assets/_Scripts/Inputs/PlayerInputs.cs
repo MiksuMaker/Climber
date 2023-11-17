@@ -16,6 +16,9 @@ public class PlayerInputs : MonoBehaviour
     KeyCode hand_Left = KeyCode.Mouse0;
     KeyCode hand_Right = KeyCode.Mouse1;
 
+    KeyCode minus = KeyCode.KeypadMinus;
+    KeyCode plus = KeyCode.KeypadPlus;
+
     string axisX = "Mouse X";
     string axisY = "Mouse Y";
 
@@ -49,6 +52,8 @@ public class PlayerInputs : MonoBehaviour
         HandleLookInput();
         HandleJumpingInput();
         HandleGrabInput();
+
+        HandleOtherInput();
     }
 
     private void HandleMovementInputs()
@@ -88,6 +93,13 @@ public class PlayerInputs : MonoBehaviour
         if (Input.GetKeyDown(hand_Right)) { inputComponent.rightGrabInput = true; }
         else if (Input.GetKeyUp(hand_Right)) { inputComponent.rightGrabInput = false; }
 
+    }
+
+    private void HandleOtherInput()
+    {
+        // Mouse Sensitivity
+        if (Input.GetKeyDown(minus)) { inputComponent.sensitivityInput = -1; }
+        else if (Input.GetKeyDown(plus)) { inputComponent.sensitivityInput = 1; }
     }
 
     #endregion

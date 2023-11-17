@@ -158,6 +158,10 @@ public class Hand
     {
         Vector3 right = Vector3.Cross(normal, Camera.main.transform.forward);
         Vector3 forward = Vector3.Cross(right, normal);
+
+        // Flip rotation if downwards
+        if (forward.y < 0f) { forward = new Vector3(forward.x, -forward.y, forward.z); }
+
         return Quaternion.LookRotation(forward.normalized, normal.normalized);
     }
 

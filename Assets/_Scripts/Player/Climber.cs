@@ -54,48 +54,7 @@ public class Climber : MonoBehaviour
         }
     }
 
-    #region Climbing V1
-    private void CalculatePullValues()
-    {
-        // Calculate the direction of pull
-        pullDir = grabber.center - transform.position;
-        Debug.DrawRay(transform.position, pullDir, Color.yellow, 2f);
-
-        // Calculate distance
-        distanceOfPull = pullDir.magnitude;
-
-        // Normalize pull direction
-        pullDir = pullDir.normalized;
-    }
-
-    private void PullTowardsCenterOfGravity()
-    {
-        // If Player is within passivePullRange, draw them in
-        //if (distanceOfPull > passivePullRange && distanceOfPull < maxPullRange)
-        //{
-
-        //}
-        //else 
-        //if (distanceOfPull > maxPullRange)
-        //{
-        //    // Reel the Player in, keep them inside the maxPullRange
-        //    float distanceOverRange = distanceOfPull - maxPullRange;
-
-        //    // Move the Player in the pull direction that much
-        //    rb.MovePosition(transform.position + pullDir * distanceOverRange * pullVelocityMultiplier);
-        //}
-        // If player is close enough, do nothing
-
-        // Pull the Player towards the center
-        //rb.MovePosition(transform.position + pullDir * passivePullStrength * Time.fixedDeltaTime);
-    }
-    #endregion
-
-    #region Climbing V2
-
-    #endregion
-
-    #region Springs
+    #region Climbing - SPRINGS
     private void CreateSpring(Vector3 anchorPoint, bool isLeftHand)
     {
         // Destroy the previous joint if there is any

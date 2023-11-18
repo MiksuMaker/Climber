@@ -6,10 +6,15 @@ public class PlayerMover : MonoBehaviour
 {
     #region Properties
     [SerializeField] PlayerInputObject inputComponent;
-    Rigidbody rb;
+    public Rigidbody rb;
 
-    [SerializeField] float movementSpeed = 2f;
+    [SerializeField] public float movementSpeed = 2f;
 
+    public MoveType currentMode = MoveType.walking;
+
+    MovementMode walkingMode;
+    MovementMode climbingMode;
+    MovementMode fallingMode;
 
     #endregion
 
@@ -18,6 +23,12 @@ public class PlayerMover : MonoBehaviour
     {
         // Fetch references
         rb = GetComponent<Rigidbody>();
+        SetupMovementModes();
+    }
+
+    private void SetupMovementModes()
+    {
+        walkingMode = new MovePosition(this);
     }
 
     private void FixedUpdate()
@@ -31,14 +42,45 @@ public class PlayerMover : MonoBehaviour
     {
         if (moveInput == Vector2.zero) { return; }
 
-        moveInput = moveInput.normalized;
+        switch (currentMode)
+        {
+            case MoveType.walking:
+                walkingMode.Move(moveInput);
+                break;
+            default: Debug.Log("This movement type has not been implemented yet!");
+                break;
+        }
+    }
+    #endregion
+}
 
-        Vector3 changeVector = transform.right * moveInput.x + transform.forward * moveInput.y;
-        changeVector = changeVector * Time.deltaTime * movementSpeed;
+public enum MoveType
+{
+    walking, climbing, falling
+}
 
-        Vector3 nextPos = transform.position + changeVector;
-        rb.MovePosition(nextPos);
+public abstract class MovementMode
+{
+    protected PlayerMover mover;
+
+    public virtual void Move(Vector3 moveInput) { }
+}
+
+public class MovePosition : MovementMode
+{
+    public MovePosition(PlayerMover _mover)
+    {
+        mover = _mover;
     }
 
-    #endregion
+    public override void Move(Vector3 moveInput)
+    {
+        moveInput = moveInput.normalized;
+
+        Vector3 changeVector = mover.transform.right * moveInput.x + mover.transform.forward * moveInput.y;
+        changeVector = changeVector * Time.deltaTime * mover.movementSpeed;
+
+        Vector3 nextPos = mover.transform.position + changeVector;
+        mover.rb.MovePosition(nextPos);
+    }
 }

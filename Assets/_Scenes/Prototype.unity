@@ -2112,7 +2112,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputComponent: {fileID: 11400000, guid: 9d5db5b7c9c68414b9588e7937733849, type: 2}
+  rb: {fileID: 0}
   movementSpeed: 5
+  currentMode: 0
 --- !u!114 &2108108903
 MonoBehaviour:
   m_ObjectHideFlags: 0

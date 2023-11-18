@@ -9,6 +9,9 @@ public class PlayerMover : MonoBehaviour
     public Rigidbody rb;
 
     [SerializeField] public float movementSpeed = 2f;
+    [SerializeField] public float velocityLimit = 2f;
+    [Tooltip("0 = No damping, 1 = No limitation")]
+    [SerializeField, Range(0f, 1f)] public float limitMultiplier = 1f;
 
     public MoveType currentMode = MoveType.walking;
 
@@ -29,6 +32,8 @@ public class PlayerMover : MonoBehaviour
     private void SetupMovementModes()
     {
         walkingMode = new MovePosition(this);
+        //walkingMode = new AddForce(this);
+        climbingMode = new AddForce(this);
     }
 
     private void FixedUpdate()
@@ -37,7 +42,7 @@ public class PlayerMover : MonoBehaviour
     }
     #endregion
 
-    #region Functions
+    #region Movement
     private void HandleMovement(Vector2 moveInput)
     {
         if (moveInput == Vector2.zero) { return; }
@@ -52,35 +57,4 @@ public class PlayerMover : MonoBehaviour
         }
     }
     #endregion
-}
-
-public enum MoveType
-{
-    walking, climbing, falling
-}
-
-public abstract class MovementMode
-{
-    protected PlayerMover mover;
-
-    public virtual void Move(Vector3 moveInput) { }
-}
-
-public class MovePosition : MovementMode
-{
-    public MovePosition(PlayerMover _mover)
-    {
-        mover = _mover;
-    }
-
-    public override void Move(Vector3 moveInput)
-    {
-        moveInput = moveInput.normalized;
-
-        Vector3 changeVector = mover.transform.right * moveInput.x + mover.transform.forward * moveInput.y;
-        changeVector = changeVector * Time.deltaTime * mover.movementSpeed;
-
-        Vector3 nextPos = mover.transform.position + changeVector;
-        mover.rb.MovePosition(nextPos);
-    }
 }

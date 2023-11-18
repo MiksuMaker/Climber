@@ -2113,7 +2113,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputComponent: {fileID: 11400000, guid: 9d5db5b7c9c68414b9588e7937733849, type: 2}
   rb: {fileID: 0}
-  movementSpeed: 5
+  movementSpeed: 4
+  velocityLimit: 4
+  limitMultiplier: 0.5
   currentMode: 0
 --- !u!114 &2108108903
 MonoBehaviour:
@@ -2181,4 +2183,4 @@ MonoBehaviour:
   springForce: 20
   damper: 20
   massScale: 5
-  breakForce: 150
+  breakForce: 1500

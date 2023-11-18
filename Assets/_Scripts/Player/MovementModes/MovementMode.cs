@@ -7,16 +7,18 @@ public enum MoveType
     walking, climbing, falling
 }
 
-public abstract class MovementMode
+public class MovementMode
 {
     protected PlayerMover mover;
+    protected MoveStatsObject stats { get { return mover.moveStats; } }
 
     public MovementMode(PlayerMover _mover)
     {
         mover = _mover;
     }
 
-    public virtual void Move(Vector3 moveInput) { }
+    public virtual void Move(Vector3 moveInput) 
+    { }
 }
 
 public class MovePosition : MovementMode
@@ -29,9 +31,9 @@ public class MovePosition : MovementMode
     {
         moveInput = moveInput.normalized;
 
-        Vector3 changeVector = mover.transform.right * moveInput.x + mover.transform.forward * moveInput.y;
-        //changeVector = changeVector * Time.deltaTime * mover.movementSpeed;
-        changeVector = changeVector * Time.fixedDeltaTime * mover.walking_movementSpeed;
+        Vector3 changeVector = mover.transform.right * moveInput.x 
+                             + mover.transform.forward * moveInput.y;
+        changeVector = changeVector * Time.fixedDeltaTime * stats.walking_movementSpeed;
 
         Vector3 nextPos = mover.transform.position + changeVector;
         mover.rb.MovePosition(nextPos);
@@ -50,9 +52,9 @@ public class AddForce : MovementMode
 
         moveInput = moveInput.normalized;
 
-        Vector3 forceVector = mover.transform.right * moveInput.x + mover.transform.forward * moveInput.y;
-        //forceVector = forceVector * Time.deltaTime * mover.movementSpeed;
-        forceVector = forceVector * Time.fixedDeltaTime * mover.climbing_horizontalSpeed * physicsMultiplier;
+        Vector3 forceVector = mover.transform.right * moveInput.x 
+                            + mover.transform.forward * moveInput.y;
+        forceVector = forceVector * Time.fixedDeltaTime * stats.climbing_horizontal_towards * physicsMultiplier;
 
         mover.rb.AddForce(forceVector, ForceMode.Force);
 
@@ -62,13 +64,13 @@ public class AddForce : MovementMode
     public virtual void LimitVelocity()
     {
         // Check if velocity is over limit
-        if (mover.rb.velocity.sqrMagnitude > (mover.velocityLimit * mover.velocityLimit))
+        if (mover.rb.velocity.sqrMagnitude > (stats.velocityLimit * stats.velocityLimit))
         {
             // If so, limit it
-            Vector3 legalVelocity = mover.rb.velocity.normalized * mover.velocityLimit;
+            Vector3 legalVelocity = mover.rb.velocity.normalized * stats.velocityLimit;
 
             // Decrease the velocity that goes over the limit by the multiplier
-            Vector3 overVelocity = (mover.rb.velocity - legalVelocity) * mover.limitMultiplier;
+            Vector3 overVelocity = (mover.rb.velocity - legalVelocity) * stats.overLimitMultiplier;
 
             // Add them together for the final velocity
             mover.rb.velocity = legalVelocity + overVelocity;
@@ -84,23 +86,43 @@ public class ClimbingMoveMode : AddForce
 
     public override void Move(Vector3 moveInput)
     {
+        // First check if touching ground
+        if (mover.CheckIfGrounded()) 
+        {
+            #region Grounded movement
+            moveInput = moveInput.normalized;
+
+            Vector3 changeVector = mover.transform.right * moveInput.x
+                                 + mover.transform.forward * moveInput.y;
+            changeVector = changeVector * Time.fixedDeltaTime * stats.walking_movementSpeed;
+
+            Vector3 nextPos = mover.transform.position + changeVector;
+            mover.rb.MovePosition(nextPos);
+            return;
+            #endregion
+        }
+
+        Debug.Log("Climbing!");
+
         moveInput = moveInput.normalized;
 
         Vector3 inputVector = mover.transform.right * moveInput.x
                            + mover.transform.forward * moveInput.y;
 
-        Vector3 moveVector = inputVector * mover.climbing_horizontalSpeed;
+        Vector3 moveVector = inputVector * stats.climbing_horizontal_towards;
 
         // Check if there is obstacle in the direction
         if (mover.DetectCollisionInDirection(inputVector))
         {
             // Add some upward climbforce to the equation
-            moveVector += Vector3.up * mover.climbing_verticalSpeed;
+            moveVector += Vector3.up * stats.climbing_vertical_below;
         }
 
         moveVector *= Time.fixedDeltaTime * physicsMultiplier;
 
         mover.rb.AddForce(moveVector, ForceMode.Force);
+
+        LimitVelocity();
     }
 
     public virtual void CheckIfClimbingUp(Vector3 inputVector)

@@ -1,23 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerMover : MonoBehaviour
 {
     #region Properties
     [SerializeField] PlayerInputObject inputComponent;
+    [SerializeField] public MoveStatsObject moveStats;
     public Rigidbody rb;
 
-    [Header("Walking")]
-    [SerializeField] public float walking_movementSpeed = 4f;
-    [Header("Climbing")]
-    [SerializeField] public float climbing_horizontalSpeed = 2f;
-    [SerializeField] public float climbing_verticalSpeed = 2f;
-    [SerializeField] public float velocityLimit = 2f;
-    [Tooltip("0 = No damping, 1 = No limitation")]
-    [SerializeField, Range(0f, 1f)] public float limitMultiplier = 1f;
-    [Header("Falling")]
-    [SerializeField] public float falling_movementSpeed = 2f;
+    //[Header("Walking")]
+    //[SerializeField] public float walking_movementSpeed = 4f;
+    //[Header("Climbing")]
+    //[SerializeField] public float climbing_horizontalSpeed = 2f;
+    //[SerializeField] public float climbing_verticalSpeed = 2f;
+    //[SerializeField] public float velocityLimit = 2f;
+    //[Tooltip("0 = No damping, 1 = No limitation")]
+    //[SerializeField, Range(0f, 1f)] public float limitMultiplier = 1f;
+    //[Header("Falling")]
+    //[SerializeField] public float falling_movementSpeed = 2f;
+
+    [SerializeField] Vector3 groundCheckPos = new Vector3(0f, 0.8f);
+    [SerializeField] float groundCheckRadius = 0.5f;
 
     public MoveType currentMoveType = MoveType.walking;
 
@@ -45,6 +50,7 @@ public class PlayerMover : MonoBehaviour
         //walkingMode = new AddForce(this);
         //climbingMode = new AddForce(this);
         climbingMode = new ClimbingMoveMode(this);
+        //climbingMode = new MovePosition(this);
 
         currentMode = walkingMode;
     }
@@ -86,8 +92,15 @@ public class PlayerMover : MonoBehaviour
 
     private void UpdateClimbingStatus(bool isClimbing)
     {
-        if (isClimbing) { ChangeMovementMode(MoveType.climbing); }
-        else { ChangeMovementMode(MoveType.walking); }
+        if (isClimbing)
+        {
+            // Detect if still touching ground
+            ChangeMovementMode(MoveType.climbing);
+        }
+        else
+        {
+            ChangeMovementMode(MoveType.walking);
+        }
     }
     #endregion
 
@@ -105,5 +118,38 @@ public class PlayerMover : MonoBehaviour
             return true;
         }
         else return false;
+    }
+
+    public bool CheckIfGrounded()
+    {
+        LayerMask groundMask = ~LayerMask.GetMask("Player");
+
+        Collider[] c = Physics.OverlapSphere(transform.position + groundCheckPos,
+                                             groundCheckRadius,
+                                             groundMask);
+
+        if (c.Length >= 1)
+        {
+            // Grounded
+            return true;
+        }
+        else
+        {
+            // Not grounded
+            return false;
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Vector3 checkPos = transform.position + groundCheckPos;
+        Gizmos.color = Color.red;
+
+        if (CheckIfGrounded())
+        {
+            Gizmos.color = Color.green;
+        }
+
+        Gizmos.DrawWireSphere(checkPos, groundCheckRadius);
     }
 }

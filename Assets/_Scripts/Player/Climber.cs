@@ -17,13 +17,9 @@ public class Climber : MonoBehaviour
     [SerializeField] float springForce = 5f;
     [SerializeField] float damper = 5f;
     [SerializeField] float massScale = 1f;
+
     [Header("Extra")]
     [SerializeField] float breakForce = 1f;
-    //float passivePullStrength = 5f;
-    //float pullVelocityMultiplier = 0.8f; 
-
-    float passivePullRange = 2f; // Range which within there is no passive pull
-    float maxPullRange = 3f;     // Keep the distance
 
     //[Header("Springs")]
     SpringJoint leftSpring;

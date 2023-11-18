@@ -31,7 +31,7 @@ public class MovePosition : MovementMode
 
         Vector3 changeVector = mover.transform.right * moveInput.x + mover.transform.forward * moveInput.y;
         //changeVector = changeVector * Time.deltaTime * mover.movementSpeed;
-        changeVector = changeVector * Time.fixedDeltaTime * mover.movementSpeed;
+        changeVector = changeVector * Time.fixedDeltaTime * mover.walking_movementSpeed;
 
         Vector3 nextPos = mover.transform.position + changeVector;
         mover.rb.MovePosition(nextPos);
@@ -40,7 +40,7 @@ public class MovePosition : MovementMode
 
 public class AddForce : MovementMode
 {
-    float physicsMultiplier = 10f;
+    protected float physicsMultiplier = 10f;
 
     public AddForce(PlayerMover _mover) : base(_mover) { }
 
@@ -52,15 +52,9 @@ public class AddForce : MovementMode
 
         Vector3 forceVector = mover.transform.right * moveInput.x + mover.transform.forward * moveInput.y;
         //forceVector = forceVector * Time.deltaTime * mover.movementSpeed;
-        forceVector = forceVector * Time.fixedDeltaTime * mover.movementSpeed * physicsMultiplier;
+        forceVector = forceVector * Time.fixedDeltaTime * mover.climbing_horizontalSpeed * physicsMultiplier;
 
-        //Vector3 nextPos = mover.transform.position + changeVector;
-        //mover.rb.MovePosition(nextPos);
-
-        //mover.rb.AddForce(forceVector, ForceMode.Force);
-        //mover.rb.AddForce(forceVector, ForceMode.Acceleration);
-        mover.rb.AddForce(forceVector, ForceMode.Impulse);
-        //mover.rb.AddForce(forceVector, ForceMode.VelocityChange);
+        mover.rb.AddForce(forceVector, ForceMode.Force);
 
         LimitVelocity();
     }
@@ -80,6 +74,43 @@ public class AddForce : MovementMode
             mover.rb.velocity = legalVelocity + overVelocity;
 
             Debug.Log("limiting velocity");
+        }
+    }
+}
+
+public class ClimbingMoveMode : AddForce
+{
+    public ClimbingMoveMode(PlayerMover _mover) : base(_mover) { }
+
+    public override void Move(Vector3 moveInput)
+    {
+        moveInput = moveInput.normalized;
+
+        Vector3 inputVector = mover.transform.right * moveInput.x
+                           + mover.transform.forward * moveInput.y;
+
+        Vector3 moveVector = inputVector * mover.climbing_horizontalSpeed;
+
+        // Check if there is obstacle in the direction
+        if (mover.DetectCollisionInDirection(inputVector))
+        {
+            // Add some upward climbforce to the equation
+            moveVector += Vector3.up * mover.climbing_verticalSpeed;
+        }
+
+        moveVector *= Time.fixedDeltaTime * physicsMultiplier;
+
+        mover.rb.AddForce(moveVector, ForceMode.Force);
+    }
+
+    public virtual void CheckIfClimbingUp(Vector3 inputVector)
+    {
+        // First check if the Player is lower than the center of pull
+        //if (mover.transform.position.y <= )
+
+        if (mover.DetectCollisionInDirection(inputVector))
+        {
+            
         }
     }
 }

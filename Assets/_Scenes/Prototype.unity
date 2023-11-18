@@ -2113,10 +2113,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputComponent: {fileID: 11400000, guid: 9d5db5b7c9c68414b9588e7937733849, type: 2}
   rb: {fileID: 0}
-  movementSpeed: 4
-  velocityLimit: 4
+  walking_movementSpeed: 4
+  climbing_horizontalSpeed: 20
+  climbing_verticalSpeed: 40
+  velocityLimit: 10
   limitMultiplier: 0.5
-  currentMode: 0
+  falling_movementSpeed: 2
+  currentMoveType: 0
 --- !u!114 &2108108903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2178,7 +2181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7370f3d4490a47468d2504074519136, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxDist: 1
+  maxDist: 2
   minDist: 0
   springForce: 20
   damper: 20

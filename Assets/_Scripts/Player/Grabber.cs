@@ -58,7 +58,7 @@ public class Grabber : MonoBehaviour
     #region Aiming
     private void CheckGrabDistance()
     {
-        Color hitColor = Color.red;
+        //Color hitColor = Color.red;
 
         Vector3 pos = head.transform.position;
         //RaycastHit lastHit;
@@ -67,7 +67,7 @@ public class Grabber : MonoBehaviour
         Ray ray = new Ray(pos, rayDir);
         if (Physics.Raycast(ray, out rayHit, grabDistance, grabbingLayerMask))
         {
-            hitColor = Color.green;
+            //hitColor = Color.green;
             raycastHitWithinReach = true;
 
             PlaceCrossHair(rayHit);
@@ -75,7 +75,7 @@ public class Grabber : MonoBehaviour
 
         if (!raycastHitWithinReach) { PlaceCrossHair(rayHit, false); }
 
-        Debug.DrawRay(pos, rayDir * grabDistance, hitColor, 0.1f);
+        //Debug.DrawRay(pos, rayDir * grabDistance, hitColor, 0.1f);
     }
 
     private void PlaceCrossHair(RaycastHit hit, bool hitFound = true)
@@ -84,7 +84,7 @@ public class Grabber : MonoBehaviour
 
         crossHairObj.transform.position = hit.point;
 
-        Debug.DrawRay(crossHairObj.transform.position, hit.normal * 2f, Color.red, 0.1f);
+        //Debug.DrawRay(crossHairObj.transform.position, hit.normal * 2f, Color.red, 0.1f);
     }
     #endregion
 

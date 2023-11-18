@@ -8,10 +8,16 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] PlayerInputObject inputComponent;
     public Rigidbody rb;
 
-    [SerializeField] public float movementSpeed = 2f;
+    [Header("Walking")]
+    [SerializeField] public float walking_movementSpeed = 4f;
+    [Header("Climbing")]
+    [SerializeField] public float climbing_horizontalSpeed = 2f;
+    [SerializeField] public float climbing_verticalSpeed = 2f;
     [SerializeField] public float velocityLimit = 2f;
     [Tooltip("0 = No damping, 1 = No limitation")]
     [SerializeField, Range(0f, 1f)] public float limitMultiplier = 1f;
+    [Header("Falling")]
+    [SerializeField] public float falling_movementSpeed = 2f;
 
     public MoveType currentMoveType = MoveType.walking;
 
@@ -37,7 +43,8 @@ public class PlayerMover : MonoBehaviour
     {
         walkingMode = new MovePosition(this);
         //walkingMode = new AddForce(this);
-        climbingMode = new AddForce(this);
+        //climbingMode = new AddForce(this);
+        climbingMode = new ClimbingMoveMode(this);
 
         currentMode = walkingMode;
     }
@@ -83,4 +90,20 @@ public class PlayerMover : MonoBehaviour
         else { ChangeMovementMode(MoveType.walking); }
     }
     #endregion
+
+    public bool DetectCollisionInDirection(Vector3 dir)
+    {
+        float checkDistance = 1f;
+        Vector3 pos = transform.position;
+
+        LayerMask grabbingLayerMask = ~LayerMask.GetMask("Player");
+        RaycastHit rayHit;
+        Vector3 rayDir = dir;
+        Ray ray = new Ray(pos, rayDir);
+        if (Physics.Raycast(ray, out rayHit, checkDistance, grabbingLayerMask))
+        {
+            return true;
+        }
+        else return false;
+    }
 }

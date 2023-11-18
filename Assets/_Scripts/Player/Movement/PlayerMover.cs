@@ -13,7 +13,9 @@ public class PlayerMover : MonoBehaviour
     [Tooltip("0 = No damping, 1 = No limitation")]
     [SerializeField, Range(0f, 1f)] public float limitMultiplier = 1f;
 
-    public MoveType currentMode = MoveType.walking;
+    public MoveType currentMoveType = MoveType.walking;
+
+    MovementMode currentMode;
 
     MovementMode walkingMode;
     MovementMode climbingMode;
@@ -24,6 +26,8 @@ public class PlayerMover : MonoBehaviour
     #region Setup
     private void Start()
     {
+        FindObjectOfType<Grabber>().OnClimbUpdate += UpdateClimbingStatus;
+
         // Fetch references
         rb = GetComponent<Rigidbody>();
         SetupMovementModes();
@@ -34,6 +38,8 @@ public class PlayerMover : MonoBehaviour
         walkingMode = new MovePosition(this);
         //walkingMode = new AddForce(this);
         climbingMode = new AddForce(this);
+
+        currentMode = walkingMode;
     }
 
     private void FixedUpdate()
@@ -47,14 +53,34 @@ public class PlayerMover : MonoBehaviour
     {
         if (moveInput == Vector2.zero) { return; }
 
-        switch (currentMode)
+        currentMode.Move(moveInput);
+    }
+    #endregion
+
+    #region Handle MovementModes
+    public void ChangeMovementMode(MoveType desiredType)
+    {
+        currentMoveType = desiredType;
+
+        switch (currentMoveType)
         {
             case MoveType.walking:
-                walkingMode.Move(moveInput);
+                currentMode = walkingMode;
                 break;
-            default: Debug.Log("This movement type has not been implemented yet!");
+            case MoveType.climbing:
+                currentMode = climbingMode;
+                break;
+
+            default:
+                Debug.Log("This movement type has not been implemented yet!");
                 break;
         }
+    }
+
+    private void UpdateClimbingStatus(bool isClimbing)
+    {
+        if (isClimbing) { ChangeMovementMode(MoveType.climbing); }
+        else { ChangeMovementMode(MoveType.walking); }
     }
     #endregion
 }

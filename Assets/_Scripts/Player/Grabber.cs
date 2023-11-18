@@ -29,6 +29,8 @@ public class Grabber : MonoBehaviour
 
     [HideInInspector]
     public bool isClimbing = false;
+    public delegate void OnClimbStatusUpdate(bool climbing);
+    public event OnClimbStatusUpdate OnClimbUpdate;
     [HideInInspector]
     public Vector3 center = Vector3.zero;
     #endregion
@@ -124,6 +126,8 @@ public class Grabber : MonoBehaviour
                 Debug.DrawRay(center, Vector3.up, Color.magenta, 5f);
                 break;
         }
+
+        OnClimbUpdate?.Invoke(isClimbing);
     }
     #endregion
 

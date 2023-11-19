@@ -11,6 +11,7 @@ public class MoveStatsObject : ScriptableObject
     [Space]
     [SerializeField] public float walking_velocityLimit_horizontal = 2f;
     [SerializeField, Range(0f, 1f)] public float walk_damper = 1f;
+    [SerializeField, Range(0f, 1f)] public float walk_drag = 0f;
 
     [Header("CLIMBING")]
     public float climbing_horizontal_towards = 5f;
@@ -22,6 +23,7 @@ public class MoveStatsObject : ScriptableObject
     [SerializeField] public float climbing_velocityLimit_horizontal = 2f;
     [SerializeField] public float climbing_velocityLimit_vertical= 2f;
     [SerializeField, Range(0f, 1f)] public float climb_damper = 1f;
+    [SerializeField, Range(0f, 1f)] public float climb_drag = 1f;
 
     [Header("Climbing Jumping")]
     public Vector3 climbing_jump_dir = new Vector3(0f, 1f, 0.5f);

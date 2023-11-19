@@ -102,10 +102,12 @@ public class PlayerMover : MonoBehaviour
         {
             // Detect if still touching ground
             ChangeMovementMode(MoveType.climbing);
+            rb.drag = moveStats.climb_drag;
         }
         else
         {
             ChangeMovementMode(MoveType.walking);
+            rb.drag = moveStats.walk_drag;
         }
     }
     #endregion

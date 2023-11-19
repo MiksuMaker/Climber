@@ -43,17 +43,29 @@ public class Grabber : MonoBehaviour
 
         grabbingLayerMask = ~LayerMask.GetMask("Player");
 
-        leftHand = new Hand(handGraphics);
-        rightHand = new Hand(handGraphics, false);
+        leftHand = new Hand(handGraphics, this);
+        rightHand = new Hand(handGraphics, this, false);
+
+        inputComponent.leftMouseUpdate += UpdateLeftGrabbing;
+        inputComponent.rightMouseUpdate += UpdateRightGrabbing;
     }
 
     private void Update()
     {
         CheckGrabDistance();
-        HandleGrabbing(inputComponent.leftGrabInput, leftHand);
-        HandleGrabbing(inputComponent.rightGrabInput, rightHand);
+        ////HandleGrabbing(inputComponent.leftGrabInput, leftHand);
+        ////HandleGrabbing(inputComponent.rightGrabInput, rightHand);
     }
     #endregion
+
+    private void UpdateLeftGrabbing(bool value)
+    {
+        HandleGrabbing(value, leftHand);
+    }
+    private void UpdateRightGrabbing(bool value)
+    {
+        HandleGrabbing(value, rightHand);
+    }
 
     #region Aiming
     private void CheckGrabDistance()
@@ -126,34 +138,60 @@ public class Grabber : MonoBehaviour
                 Debug.DrawRay(center, Vector3.up, Color.magenta, 5f);
                 break;
         }
-
         OnClimbUpdate?.Invoke(isClimbing);
     }
     #endregion
 
+    #region Animation
+    public void StartHandAnimation(IEnumerator coroutine, ref IEnumerator current)
+    {
+        if (current != null)
+        {
+            StopCoroutine(current);
+            current = null;
+        }
+        current = coroutine;
+        StartCoroutine(current);
+    }
+    #endregion
 }
 
 public class Hand
 {
     public bool isGrabbing = false;
-    public Vector3 grabPos { get { return graphics.transform.position; } }
+    //public Vector3 grabPos { get { return graphics.transform.position; } }
+    public Vector3 grabPos { get; private set; }
+    public Vector3 grabNormal;
     public GameObject graphics = null;
     public bool isLeftHand = true;
 
-    public Hand(GameObject handGraphics, bool isLeft = true)
+    // Animation
+    Grabber grabber;
+    IEnumerator grabAnimator;
+
+    public Hand(GameObject handGraphics, Grabber g, bool isLeft = true)
     {
         graphics = GameObject.Instantiate(handGraphics);
         graphics.SetActive(false);
         isLeftHand = isLeft;
+        grabber = g;
     }
 
     public void PlaceHand(Vector3 placementPos, Vector3 normal)
     {
         isGrabbing = true;
         graphics.SetActive(true);
-        graphics.transform.position = placementPos;
-        //graphics.transform.up = normal;
-        graphics.transform.rotation = CalcRotation(placementPos, normal);
+
+        // V1
+        //graphics.transform.position = placementPos;
+        //graphics.transform.rotation = CalcRotation(placementPos, normal);
+
+        // V2
+        grabPos = placementPos;
+        grabNormal = normal;
+        //graphics.transform.position = placementPos;
+        //graphics.transform.rotation = CalcRotation(placementPos, normal);
+        StartHandMovement(true);
 
         graphics.transform.localScale = isLeftHand ? new Vector3(1f, 1f, 1f) : new Vector3(-1f, 1f, 1f);
     }
@@ -172,6 +210,70 @@ public class Hand
     public void UnplaceHand()
     {
         isGrabbing = false;
-        graphics.SetActive(false);
+        //graphics.SetActive(false);
+        StartHandMovement(false);
     }
+
+    #region Animation
+    private void StartHandMovement(bool activeGrab)
+    {
+        //Debug.Log(activeGrab);
+        grabber.StartHandAnimation(GrabAnimator(activeGrab), ref grabAnimator);
+    }
+
+    IEnumerator GrabAnimator(bool activeGrab)
+    {
+        if (!graphics.activeSelf) { graphics.SetActive(true); }
+
+        // Get hand graphics position
+        Vector3 origin = graphics.transform.position;
+
+        Vector3 destination = Vector3.zero;
+        if (activeGrab)
+        { destination = grabPos; } // Hand on the wall
+        else
+        { destination = grabber.transform.position; } // Return hand next to body
+
+        Vector3 path = (destination - origin);
+
+        // ROTATION
+        Quaternion ogRot = graphics.transform.rotation;
+        Quaternion desiredRot = Quaternion.identity;
+        if (activeGrab)
+        { desiredRot = CalcRotation(grabPos, grabNormal); }
+        else
+        { desiredRot = Quaternion.Euler(Vector3.zero); }
+
+
+        float timeSpent = 0f;
+        float handMoveTime;
+        handMoveTime = activeGrab ? 0.1f : 1f;
+
+        while (timeSpent < handMoveTime)
+        {
+            float progress = (timeSpent / handMoveTime);
+
+            // Move the hand towards destination
+            graphics.transform.position = origin + (path * Easing.EaseOutQuart(progress));
+
+            // Rotate
+            graphics.transform.rotation = Quaternion.Lerp(ogRot, desiredRot, Easing.EaseOutQuart(progress));
+
+            timeSpent += 0.01f;
+            yield return new WaitForSeconds(0.01f);
+        }
+
+        // FINALIZE
+        if (activeGrab)
+        {
+            // Finalize placement
+            graphics.transform.position = destination;
+            graphics.transform.rotation = desiredRot;
+        }
+        else
+        {
+            graphics.SetActive(false);
+        }
+    }
+    #endregion
 }

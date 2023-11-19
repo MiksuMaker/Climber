@@ -32,8 +32,8 @@ public class Grabber_2 : MonoBehaviour
 
         grabbingLayerMask = ~LayerMask.GetMask("Player");
 
-        leftHand = new Hand(handGraphics);
-        rightHand = new Hand(handGraphics, false);
+        //leftHand = new Hand(handGraphics);
+        //rightHand = new Hand(handGraphics, false);
 
     }
     #endregion

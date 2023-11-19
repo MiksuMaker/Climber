@@ -74,7 +74,6 @@ public class PlayerInputs : MonoBehaviour
     private void HandleJumpingInput()
     {
         if (Input.GetKeyDown(jump)) { inputComponent.jumpValue = true; }
-        //if (Input.GetKeyUp(jump)) { inputComponent.jumpValue = false; }
     }
 
     private void HandleLookInput()
@@ -88,12 +87,22 @@ public class PlayerInputs : MonoBehaviour
 
     private void HandleGrabInput()
     {
-        if (Input.GetKeyDown(hand_Left)) { inputComponent.leftGrabInput = true; }
-        else if (Input.GetKeyUp(hand_Left)) { inputComponent.leftGrabInput = false; }
-        if (Input.GetKeyDown(hand_Right)) { inputComponent.rightGrabInput = true; }
-        else if (Input.GetKeyUp(hand_Right)) { inputComponent.rightGrabInput = false; }
+        if (Input.GetKeyDown(hand_Left)) { inputComponent.LeftGrabInput = true; }
+        else if (Input.GetKeyUp(hand_Left)) { inputComponent.LeftGrabInput = false; }
+        if (Input.GetKeyDown(hand_Right)) { inputComponent.RightGrabInput = true; }
+        else if (Input.GetKeyUp(hand_Right)) { inputComponent.RightGrabInput = false; }
 
     }
+
+    //private bool NewBool(bool desiredValue, bool currentValue)
+    //{
+    //    if (currentValue != desiredValue)
+    //    {
+    //        return desiredValue;
+    //    }
+    //    // Otherwise, don't update it needlessly
+
+    //}
 
     private void HandleOtherInput()
     {

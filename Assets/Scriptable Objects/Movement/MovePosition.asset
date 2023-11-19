@@ -16,13 +16,15 @@ MonoBehaviour:
   walking_jump_power: 4
   walking_velocityLimit_horizontal: 4
   walk_damper: 0.8
+  walk_drag: 0
   climbing_horizontal_towards: 3
   climbing_horizontal_away: 2
-  climbing_vertical_boost: 2
-  climbing_vertical_over: 1
-  climbing_velocityLimit_horizontal: 2
+  climbing_vertical_boost: 1
+  climbing_vertical_over: 0.5
+  climbing_velocityLimit_horizontal: 4
   climbing_velocityLimit_vertical: 2
-  climb_damper: 1
+  climb_damper: 0.8
+  climb_drag: 1
   climbing_jump_dir: {x: 0, y: 1, z: 0.5}
   climbing_jump_power: 2
   falling_movementSpeed: 2

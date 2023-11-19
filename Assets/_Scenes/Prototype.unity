@@ -948,6 +948,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 717419547}
+  - component: {fileID: 717419548}
   m_Layer: 10
   m_Name: Head
   m_TagString: Untagged
@@ -973,6 +974,19 @@ Transform:
   m_Father: {fileID: 2108108900}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &717419548
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 717419546}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &755908669
 GameObject:
   m_ObjectHideFlags: 0
@@ -2112,7 +2126,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputComponent: {fileID: 11400000, guid: 9d5db5b7c9c68414b9588e7937733849, type: 2}
-  moveStats: {fileID: 11400000, guid: 87810b6c223064c47a7d309440e3e20d, type: 2}
+  moveStats: {fileID: 11400000, guid: afea28b0d1c3e3a429ecdb4874cbcb68, type: 2}
+  grabber: {fileID: 0}
   rb: {fileID: 0}
   groundCheckPos: {x: 0, y: 0.1, z: 0}
   groundCheckRadius: 0.4

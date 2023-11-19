@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ff761bb7379cfc4ba2d48e27f9ff7f4, type: 3}
-  m_Name: PlayerMoveStats
+  m_Name: MovePosition
   m_EditorClassIdentifier: 
   walking_speed: 4
   walking_jump_power: 4
   walking_velocityLimit_horizontal: 4
   walk_damper: 0.8
-  climbing_horizontal_towards: 20
+  climbing_horizontal_towards: 3
   climbing_horizontal_away: 2
-  climbing_vertical_boost: 10
-  climbing_vertical_over: 5
+  climbing_vertical_boost: 2
+  climbing_vertical_over: 1
   climbing_velocityLimit_horizontal: 2
   climbing_velocityLimit_vertical: 2
   climb_damper: 1

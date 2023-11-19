@@ -8,6 +8,8 @@ public class PlayerMover : MonoBehaviour
     #region Properties
     [SerializeField] PlayerInputObject inputComponent;
     [SerializeField] public MoveStatsObject moveStats;
+    [HideInInspector]
+    public Grabber grabber;
     public Rigidbody rb;
 
     //[Header("Walking")]
@@ -37,7 +39,8 @@ public class PlayerMover : MonoBehaviour
     #region Setup
     private void Start()
     {
-        FindObjectOfType<Grabber>().OnClimbUpdate += UpdateClimbingStatus;
+        grabber = FindObjectOfType<Grabber>();
+        grabber.OnClimbUpdate += UpdateClimbingStatus;
 
         // Fetch references
         rb = GetComponent<Rigidbody>();
@@ -48,9 +51,12 @@ public class PlayerMover : MonoBehaviour
     {
         walkingMode = new MovePosition(this);
         //walkingMode = new AddForce(this);
+
         //climbingMode = new AddForce(this);
-        climbingMode = new ClimbingMoveMode(this);
+        //climbingMode = new ClimbingMoveMode(this);
         //climbingMode = new MovePosition(this);
+
+        climbingMode = new ClimbingPositionChange(this);
 
         currentMode = walkingMode;
     }
@@ -136,6 +142,23 @@ public class PlayerMover : MonoBehaviour
         else
         {
             // Not grounded
+            return false;
+        }
+    }
+
+    public bool CheckIfOverCOP()
+    {
+        //float height_modifier = 1f;
+        float height_modifier = 0f;
+
+        if (transform.position.y + height_modifier > grabber.center.y)
+        {
+            // Over
+            return true;
+        }
+        else
+        {
+            // Under
             return false;
         }
     }

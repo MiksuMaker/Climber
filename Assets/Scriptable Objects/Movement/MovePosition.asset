@@ -17,8 +17,8 @@ MonoBehaviour:
   walking_velocityLimit_horizontal: 4
   walk_damper: 0.8
   walk_drag: 0
-  climbing_horizontal_towards: 3
-  climbing_horizontal_away: 2
+  climbing_horizontal_towards: 2
+  climbing_horizontal_away: 1
   climbing_vertical_boost: 1
   climbing_vertical_over: 0.5
   climbing_velocityLimit_horizontal: 4

@@ -276,7 +276,7 @@ public class Hand
         else
         { desiredRot = (isLeftHand ? grabber.idleHandPos_L : grabber.idleHandPos_R).rotation; }
 
-
+        float timeTick = 0.01f;
         float timeSpent = 0f;
         float handMoveTime;
         //handMoveTime = activeGrab ? 0.1f : 1f;
@@ -320,9 +320,8 @@ public class Hand
                 graphics.transform.rotation = Quaternion.Lerp(ogRot, desiredRot, realProgress);
             }
 
-
-            timeSpent += 0.01f;
-            yield return new WaitForSeconds(0.01f);
+            timeSpent += timeTick;
+            yield return new WaitForSeconds(timeTick);
         }
         #endregion
 

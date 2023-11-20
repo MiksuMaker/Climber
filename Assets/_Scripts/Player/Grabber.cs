@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class Grabber : MonoBehaviour
 {
@@ -125,7 +127,7 @@ public class Grabber : MonoBehaviour
                 // Grab it with the hand
                 hand.PlaceHand(rayHit.point, rayHit.normal);
                 UpdateCurrentClimbCenter();
-                OnGrab?.Invoke(hand.grabPos, hand.isLeftHand);
+                //OnGrab?.Invoke(hand.grabPos, hand.isLeftHand);
             }
         }
         else
@@ -133,7 +135,7 @@ public class Grabber : MonoBehaviour
             // Ungrab it
             hand.UnplaceHand();
             UpdateCurrentClimbCenter();
-            OnRelease?.Invoke(hand.isLeftHand);
+            //OnRelease?.Invoke(hand.isLeftHand);
         }
     }
 
@@ -227,6 +229,10 @@ public class Hand
         isGrabbing = false;
         //graphics.SetActive(false);
         StartHandMovement(false);
+
+        // If grabbing, destroy the spring
+        grabber.OnRelease?.Invoke(isLeftHand);
+        
     }
 
     #region Animation
@@ -239,6 +245,7 @@ public class Hand
     IEnumerator GrabAnimator(bool activeGrab)
     {
         if (!graphics.activeSelf) { graphics.SetActive(true); }
+
 
         // Get hand graphics position
         Vector3 origin = graphics.transform.position;
@@ -325,6 +332,10 @@ public class Hand
             // Finalize placement
             graphics.transform.position = destination;
             graphics.transform.rotation = desiredRot;
+
+            // Create the spring
+            grabber.OnGrab?.Invoke(grabPos, isLeftHand);
+            Debug.DrawRay(grabPos, grabNormal, Color.red, 0.2f);
         }
         else
         {

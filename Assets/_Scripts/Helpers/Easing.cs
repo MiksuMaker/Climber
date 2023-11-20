@@ -6,7 +6,7 @@ static public class Easing
 {
     public enum Type
     {
-        inOutBack, inOutExpo, inOutBackExpoHybrid, inExpo, outQuart, easeInCirc,
+        inOutBack, inOutExpo, inOutBackExpoHybrid, inExpo, inQuart, outQuart, easeInCirc,
     }
 
     static public float EaseType(float x, Type type)
@@ -17,6 +17,7 @@ static public class Easing
             case Type.inOutExpo: return EaseInOutExpo(x);
             case Type.inOutBackExpoHybrid: return EaseInOutBackExpoHybrid(x);
             case Type.inExpo: return EaseInExpo(x);
+            case Type.inQuart: return EaseInQuart(x);
             case Type.outQuart: return EaseOutQuart(x);
             case Type.easeInCirc: return EaseInCirc(x);
             default: return 0;
@@ -53,6 +54,11 @@ static public class Easing
     static public float EaseInExpo(float x)
     {
         return x == 0 ? 0 : Mathf.Pow(2, 10 * x - 10);
+    }
+
+    static public float EaseInQuart(float x)
+    {
+        return x * x * x * x;
     }
 
     static public float EaseOutQuart(float x)

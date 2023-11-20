@@ -45,6 +45,8 @@ public class Grabber : MonoBehaviour
     public float overGrabPos_Height = 0.5f;
     public float grabbing_Time = 0.1f;
 
+    [SerializeField]
+    public AnimationCurve curve;
     #endregion
 
     #region Setup
@@ -296,7 +298,8 @@ public class Hand
             if (activeGrab)
             {
                 // V2, BEZIER CURVE
-                graphics.transform.position = Bezier.CalcBezierPos(a, b, c, d, Easing.EaseOutQuart(progress));
+                //graphics.transform.position = Bezier.CalcBezierPos(a, b, c, d, Easing.EaseOutQuart(progress));
+                graphics.transform.position = Bezier.CalcBezierPos(a, b, c, d, grabber.curve.Evaluate(progress));
             }
             else
             {

@@ -2281,6 +2281,40 @@ MonoBehaviour:
   idleHandPos_R: {fileID: 735405370}
   beforeGrabPos_Length: 0.3
   overGrabPos_Height: 0.5
+  grabbing_Time: 0.2
+  curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2.8301885
+      outSlope: 2.8301885
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.045833334
+    - serializedVersion: 3
+      time: 0.6661915
+      value: 0.82813114
+      inSlope: 0.18719395
+      outSlope: 0.18719395
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.7878025
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.95790994
+      outSlope: 0.95790994
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.32453743
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &2108108906
 MonoBehaviour:
   m_ObjectHideFlags: 0

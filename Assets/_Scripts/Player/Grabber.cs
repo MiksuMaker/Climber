@@ -44,9 +44,10 @@ public class Grabber : MonoBehaviour
     public float beforeGrabPos_Length = 0.5f;
     public float overGrabPos_Height = 0.5f;
     public float grabbing_Time = 0.1f;
+    public float retract_Time = 1f;
 
     [SerializeField]
-    public AnimationCurve curve;
+    public AnimationCurve grabCurve;
     #endregion
 
     #region Setup
@@ -67,8 +68,6 @@ public class Grabber : MonoBehaviour
     private void Update()
     {
         CheckGrabDistance();
-        ////HandleGrabbing(inputComponent.leftGrabInput, leftHand);
-        ////HandleGrabbing(inputComponent.rightGrabInput, rightHand);
     }
     #endregion
 
@@ -169,10 +168,6 @@ public class Grabber : MonoBehaviour
     }
     #endregion
 
-    private void OnDrawGizmos()
-    {
-        //Gizmos.DrawWireSphere(transform.position + idleHandPos, 0.2f);
-    }
 }
 
 public class Hand
@@ -260,7 +255,7 @@ public class Hand
         Vector3 a = origin;
         //Vector3 b = grabPos + (grabber.transform.position - grabPos).normalized * 0.3f; // Before the grabbing "animation"
         Vector3 b = grabPos + (grabber.transform.position - grabPos).normalized * grabber.beforeGrabPos_Length; // Before the grabbing "animation"
-        Vector3 c = grabPos 
+        Vector3 c = grabPos
                             //+ (grabPos - grabber.transform.position).normalized 
                             //+ grabNormal * 0.5f; // Over the grabPos
                             + grabNormal * grabber.overGrabPos_Height; // Over the grabPos
@@ -278,12 +273,13 @@ public class Hand
         float timeSpent = 0f;
         float handMoveTime;
         //handMoveTime = activeGrab ? 0.1f : 1f;
-        handMoveTime = activeGrab ? grabber.grabbing_Time : 1f;
+        handMoveTime = activeGrab ? grabber.grabbing_Time : grabber.retract_Time;
 
+        float progress, realProgress;
         #region WHILE LOOP
         while (timeSpent < handMoveTime)
         {
-            float progress = (timeSpent / handMoveTime);
+            progress = (timeSpent / handMoveTime);
 
             // If retracting hand, calculate the path anew
             if (!activeGrab)
@@ -299,17 +295,24 @@ public class Hand
             {
                 // V2, BEZIER CURVE
                 //graphics.transform.position = Bezier.CalcBezierPos(a, b, c, d, Easing.EaseOutQuart(progress));
-                graphics.transform.position = Bezier.CalcBezierPos(a, b, c, d, grabber.curve.Evaluate(progress));
+                graphics.transform.position = Bezier.CalcBezierPos(a, b, c, d, grabber.grabCurve.Evaluate(progress));
+
+                // Rotate
+                graphics.transform.rotation = Quaternion.Lerp(ogRot, desiredRot, Easing.EaseOutQuart(progress));
             }
             else
             {
                 // V1
+                //graphics.transform.position = origin + (path * Easing.EaseOutQuart(progress)); // Original
+                
                 // Move the hand towards destination
-                graphics.transform.position = origin + (path * Easing.EaseOutQuart(progress));
+                realProgress = Easing.EaseOutQuart(progress);
+                graphics.transform.position = origin + (path * realProgress);
+
+                // Rotate
+                graphics.transform.rotation = Quaternion.Lerp(ogRot, desiredRot, realProgress);
             }
 
-            // Rotate
-            graphics.transform.rotation = Quaternion.Lerp(ogRot, desiredRot, Easing.EaseOutQuart(progress));
 
             timeSpent += 0.01f;
             yield return new WaitForSeconds(0.01f);

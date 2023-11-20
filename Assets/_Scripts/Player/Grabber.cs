@@ -33,6 +33,14 @@ public class Grabber : MonoBehaviour
     public event OnClimbStatusUpdate OnClimbUpdate;
     [HideInInspector]
     public Vector3 center = Vector3.zero;
+
+    [Header("Hand placement")]
+    //[SerializeField] public Vector3 idleHandPos;
+    //[SerializeField] public float sidePos = 1f;
+
+    [SerializeField] public Transform idleHandPos_L;
+    [SerializeField] public Transform idleHandPos_R;
+    
     #endregion
 
     #region Setup
@@ -154,6 +162,11 @@ public class Grabber : MonoBehaviour
         StartCoroutine(current);
     }
     #endregion
+
+    private void OnDrawGizmos()
+    {
+        //Gizmos.DrawWireSphere(transform.position + idleHandPos, 0.2f);
+    }
 }
 
 public class Hand
@@ -171,16 +184,17 @@ public class Hand
 
     public Hand(GameObject handGraphics, Grabber g, bool isLeft = true)
     {
-        graphics = GameObject.Instantiate(handGraphics);
-        graphics.SetActive(false);
         isLeftHand = isLeft;
         grabber = g;
+        graphics = GameObject.Instantiate(handGraphics);
+        graphics.SetActive(false);
     }
 
     public void PlaceHand(Vector3 placementPos, Vector3 normal)
     {
         isGrabbing = true;
         graphics.SetActive(true);
+        graphics.transform.parent = null;
 
         // V1
         //graphics.transform.position = placementPos;
@@ -238,11 +252,12 @@ public class Hand
 
         // ROTATION
         Quaternion ogRot = graphics.transform.rotation;
-        Quaternion desiredRot = Quaternion.identity;
+        //Quaternion desiredRot = Quaternion.identity;
+        Quaternion desiredRot = Quaternion.Euler(new Vector3(90f, 0f, -90f));
         if (activeGrab)
         { desiredRot = CalcRotation(grabPos, grabNormal); }
         else
-        { desiredRot = Quaternion.Euler(Vector3.zero); }
+        { desiredRot = (isLeftHand ? grabber.idleHandPos_L : grabber.idleHandPos_R).rotation; }
 
 
         float timeSpent = 0f;
@@ -252,6 +267,15 @@ public class Hand
         while (timeSpent < handMoveTime)
         {
             float progress = (timeSpent / handMoveTime);
+
+            // If retracting hand, calculate the path anew
+            if (!activeGrab)
+            {
+                //destination = grabber.transform.position + (isLeftHand ? grabber.idleHandPos_L : grabber.idleHandPos_R).localPosition;
+                destination = (isLeftHand ? grabber.idleHandPos_L : grabber.idleHandPos_R).position;
+
+                path = destination - origin;
+            }
 
             // Move the hand towards destination
             graphics.transform.position = origin + (path * Easing.EaseOutQuart(progress));
@@ -272,6 +296,7 @@ public class Hand
         }
         else
         {
+            graphics.transform.parent = grabber.transform;
             graphics.SetActive(false);
         }
     }

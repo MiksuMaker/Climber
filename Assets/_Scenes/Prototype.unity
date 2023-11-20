@@ -2279,6 +2279,8 @@ MonoBehaviour:
   center: {x: 0, y: 0, z: 0}
   idleHandPos_L: {fileID: 1131279282}
   idleHandPos_R: {fileID: 735405370}
+  beforeGrabPos_Length: 0.3
+  overGrabPos_Height: 0.5
 --- !u!114 &2108108906
 MonoBehaviour:
   m_ObjectHideFlags: 0

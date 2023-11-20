@@ -40,7 +40,11 @@ public class Grabber : MonoBehaviour
 
     [SerializeField] public Transform idleHandPos_L;
     [SerializeField] public Transform idleHandPos_R;
-    
+
+    public float beforeGrabPos_Length = 0.5f;
+    public float overGrabPos_Height = 0.5f;
+    public float grabbing_Time = 0.1f;
+
     #endregion
 
     #region Setup
@@ -247,13 +251,22 @@ public class Hand
         { destination = grabPos; } // Hand on the wall
         else
         { destination = grabber.transform.position; } // Return hand next to body
-
         Vector3 path = (destination - origin);
+
+        // BEZIER CURVE
+        //Vector3 b = grabPos + grabNormal * 2f;
+        Vector3 a = origin;
+        //Vector3 b = grabPos + (grabber.transform.position - grabPos).normalized * 0.3f; // Before the grabbing "animation"
+        Vector3 b = grabPos + (grabber.transform.position - grabPos).normalized * grabber.beforeGrabPos_Length; // Before the grabbing "animation"
+        Vector3 c = grabPos 
+                            //+ (grabPos - grabber.transform.position).normalized 
+                            //+ grabNormal * 0.5f; // Over the grabPos
+                            + grabNormal * grabber.overGrabPos_Height; // Over the grabPos
+        Vector3 d = destination;
 
         // ROTATION
         Quaternion ogRot = graphics.transform.rotation;
-        //Quaternion desiredRot = Quaternion.identity;
-        Quaternion desiredRot = Quaternion.Euler(new Vector3(90f, 0f, -90f));
+        Quaternion desiredRot = Quaternion.identity;
         if (activeGrab)
         { desiredRot = CalcRotation(grabPos, grabNormal); }
         else
@@ -262,8 +275,10 @@ public class Hand
 
         float timeSpent = 0f;
         float handMoveTime;
-        handMoveTime = activeGrab ? 0.1f : 1f;
+        //handMoveTime = activeGrab ? 0.1f : 1f;
+        handMoveTime = activeGrab ? grabber.grabbing_Time : 1f;
 
+        #region WHILE LOOP
         while (timeSpent < handMoveTime)
         {
             float progress = (timeSpent / handMoveTime);
@@ -273,12 +288,22 @@ public class Hand
             {
                 //destination = grabber.transform.position + (isLeftHand ? grabber.idleHandPos_L : grabber.idleHandPos_R).localPosition;
                 destination = (isLeftHand ? grabber.idleHandPos_L : grabber.idleHandPos_R).position;
-
                 path = destination - origin;
+
+                desiredRot = (isLeftHand ? grabber.idleHandPos_L : grabber.idleHandPos_R).rotation;
             }
 
-            // Move the hand towards destination
-            graphics.transform.position = origin + (path * Easing.EaseOutQuart(progress));
+            if (activeGrab)
+            {
+                // V2, BEZIER CURVE
+                graphics.transform.position = Bezier.CalcBezierPos(a, b, c, d, Easing.EaseOutQuart(progress));
+            }
+            else
+            {
+                // V1
+                // Move the hand towards destination
+                graphics.transform.position = origin + (path * Easing.EaseOutQuart(progress));
+            }
 
             // Rotate
             graphics.transform.rotation = Quaternion.Lerp(ogRot, desiredRot, Easing.EaseOutQuart(progress));
@@ -286,6 +311,7 @@ public class Hand
             timeSpent += 0.01f;
             yield return new WaitForSeconds(0.01f);
         }
+        #endregion
 
         // FINALIZE
         if (activeGrab)
@@ -296,8 +322,9 @@ public class Hand
         }
         else
         {
+            graphics.transform.position = (isLeftHand ? grabber.idleHandPos_L : grabber.idleHandPos_R).position;
             graphics.transform.parent = grabber.transform;
-            graphics.SetActive(false);
+            //graphics.SetActive(false);
         }
     }
     #endregion

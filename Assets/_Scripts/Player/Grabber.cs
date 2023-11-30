@@ -283,6 +283,7 @@ public class Hand
         handMoveTime = activeGrab ? grabber.grabbing_Time : grabber.retract_Time;
 
         float progress, realProgress;
+        //bool halfway = false;
         #region WHILE LOOP
         while (timeSpent < handMoveTime)
         {
@@ -301,7 +302,6 @@ public class Hand
             if (activeGrab)
             {
                 // V2, BEZIER CURVE
-                //graphics.transform.position = Bezier.CalcBezierPos(a, b, c, d, Easing.EaseOutQuart(progress));
                 graphics.transform.position = Bezier.CalcBezierPos(a, b, c, d, grabber.grabCurve.Evaluate(progress));
 
                 // Rotate
@@ -309,19 +309,19 @@ public class Hand
             }
             else
             {
-                // V1
-                //graphics.transform.position = origin + (path * Easing.EaseOutQuart(progress)); // Original
-                
                 // Move the hand towards destination
                 realProgress = Easing.EaseOutQuart(progress);
                 graphics.transform.position = origin + (path * realProgress);
+
 
                 // Rotate
                 graphics.transform.rotation = Quaternion.Lerp(ogRot, desiredRot, realProgress);
             }
 
-            timeSpent += timeTick;
-            yield return new WaitForSeconds(timeTick);
+            //timeSpent += timeTick;
+            //yield return new WaitForSeconds(timeTick);
+            timeSpent += Time.fixedDeltaTime;
+            yield return new WaitForFixedUpdate();
         }
         #endregion
 

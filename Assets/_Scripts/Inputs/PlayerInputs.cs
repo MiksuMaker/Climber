@@ -51,7 +51,7 @@ public class PlayerInputs : MonoBehaviour
         HandleMovementInputs();
         HandleLookInput();
         HandleJumpingInput();
-        HandleGrabInput();
+        HandleMouseInput();
 
         HandleOtherInput();
     }
@@ -85,12 +85,12 @@ public class PlayerInputs : MonoBehaviour
         inputComponent.lookValue = new Vector2(mouseX, mouseY);
     }
 
-    private void HandleGrabInput()
+    private void HandleMouseInput()
     {
-        if (Input.GetKeyDown(hand_Left)) { inputComponent.LeftGrabInput = true; }
-        else if (Input.GetKeyUp(hand_Left)) { inputComponent.LeftGrabInput = false; }
-        if (Input.GetKeyDown(hand_Right)) { inputComponent.RightGrabInput = true; }
-        else if (Input.GetKeyUp(hand_Right)) { inputComponent.RightGrabInput = false; }
+        if (Input.GetKeyDown(hand_Left)) { inputComponent.LeftHandInput = true; }
+        else if (Input.GetKeyUp(hand_Left)) { inputComponent.LeftHandInput = false; }
+        if (Input.GetKeyDown(hand_Right)) { inputComponent.RightHandInput = true; }
+        else if (Input.GetKeyUp(hand_Right)) { inputComponent.RightHandInput = false; }
 
     }
 

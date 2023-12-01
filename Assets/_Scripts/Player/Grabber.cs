@@ -69,8 +69,8 @@ public class Grabber : MonoBehaviour
         leftHand = new Hand(handObject.handGraphics, this);
         rightHand = new Hand(handObject.handGraphics, this, false);
 
-        inputComponent.leftMouseUpdate += UpdateLeftGrabbing;
-        inputComponent.rightMouseUpdate += UpdateRightGrabbing;
+        //inputComponent.leftHandUpdate += UpdateLeftGrabbing;
+        //inputComponent.rightHandUpdate += UpdateRightGrabbing;
     }
 
     private void Update()
@@ -86,6 +86,11 @@ public class Grabber : MonoBehaviour
     private void UpdateRightGrabbing(bool value)
     {
         HandleGrabbing(value, rightHand);
+    }
+
+    public void UpdateHandGrabbing(bool value, bool isLeft)
+    {
+        HandleGrabbing(value, (isLeft ? leftHand : rightHand));
     }
 
     #region Aiming

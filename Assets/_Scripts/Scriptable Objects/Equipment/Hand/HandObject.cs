@@ -12,8 +12,4 @@ public class HandObject : ItemObject
     public GameObject handGraphics;
     [Space]
     public SpringDataObject spring;
-
-    #region Functions
-
-    #endregion
 }

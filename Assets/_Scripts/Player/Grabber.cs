@@ -50,6 +50,8 @@ public class Grabber : MonoBehaviour
 
     [SerializeField]
     public AnimationCurve grabCurve;
+    [SerializeField]
+    bool underLedgeGrab_On = false;
     #endregion
 
     #region Setup
@@ -127,7 +129,6 @@ public class Grabber : MonoBehaviour
                 // Grab it with the hand
                 hand.PlaceHand(rayHit.point, rayHit.normal);
                 UpdateCurrentClimbCenter();
-                //OnGrab?.Invoke(hand.grabPos, hand.isLeftHand);
             }
         }
         else
@@ -135,7 +136,6 @@ public class Grabber : MonoBehaviour
             // Ungrab it
             hand.UnplaceHand();
             UpdateCurrentClimbCenter();
-            //OnRelease?.Invoke(hand.isLeftHand);
         }
     }
 
@@ -190,13 +190,14 @@ public class Hand
         isLeftHand = isLeft;
         grabber = g;
         graphics = GameObject.Instantiate(handGraphics);
-        graphics.SetActive(false);
+        graphics.transform.position = (isLeft ? g.idleHandPos_L : g.idleHandPos_R).position;
+        graphics.transform.rotation = (isLeft ? g.idleHandPos_L : g.idleHandPos_R).rotation;
+        graphics.transform.parent = g.transform;
     }
 
     public void PlaceHand(Vector3 placementPos, Vector3 normal)
     {
         isGrabbing = true;
-        graphics.SetActive(true);
         graphics.transform.parent = null;
 
         // V1
@@ -227,7 +228,6 @@ public class Hand
     public void UnplaceHand()
     {
         isGrabbing = false;
-        //graphics.SetActive(false);
         StartHandMovement(false);
 
         // If grabbing, destroy the spring
@@ -258,13 +258,11 @@ public class Hand
         Vector3 path = (destination - origin);
 
         // BEZIER CURVE
-        //Vector3 b = grabPos + grabNormal * 2f;
         Vector3 a = origin;
-        //Vector3 b = grabPos + (grabber.transform.position - grabPos).normalized * 0.3f; // Before the grabbing "animation"
-        Vector3 b = grabPos + (grabber.transform.position - grabPos).normalized * grabber.beforeGrabPos_Length; // Before the grabbing "animation"
+        Vector3 b = grabPos + 
+                                (grabber.transform.position - grabPos).normalized 
+                                * grabber.beforeGrabPos_Length; // Before the grabbing "animation"
         Vector3 c = grabPos
-                            //+ (grabPos - grabber.transform.position).normalized 
-                            //+ grabNormal * 0.5f; // Over the grabPos
                             + grabNormal * grabber.overGrabPos_Height; // Over the grabPos
         Vector3 d = destination;
 
@@ -318,8 +316,6 @@ public class Hand
                 graphics.transform.rotation = Quaternion.Lerp(ogRot, desiredRot, realProgress);
             }
 
-            //timeSpent += timeTick;
-            //yield return new WaitForSeconds(timeTick);
             timeSpent += Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }
@@ -340,7 +336,6 @@ public class Hand
         {
             graphics.transform.position = (isLeftHand ? grabber.idleHandPos_L : grabber.idleHandPos_R).position;
             graphics.transform.parent = grabber.transform;
-            //graphics.SetActive(false);
         }
     }
     #endregion

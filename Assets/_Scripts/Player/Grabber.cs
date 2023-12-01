@@ -52,6 +52,7 @@ public class Grabber : MonoBehaviour
     public AnimationCurve grabCurve;
     [SerializeField]
     bool underLedgeGrab_On = false;
+    bool legalGrabPos = false;
     #endregion
 
     #region Setup
@@ -96,15 +97,23 @@ public class Grabber : MonoBehaviour
         Ray ray = new Ray(pos, rayDir);
         if (Physics.Raycast(ray, out rayHit, grabDistance, grabbingLayerMask))
         {
-            //hitColor = Color.green;
-            raycastHitWithinReach = true;
 
-            PlaceCrossHair(rayHit);
+            // Check if the normal is acceptable
+            if (underLedgeGrab_On || !(Vector3.Dot(rayHit.normal, Vector3.down) >= 1))
+            {
+                legalGrabPos = true;
+                raycastHitWithinReach = true;
+                PlaceCrossHair(rayHit);
+            }
+            else
+            {
+                // Too steep --> Can't hold on
+                legalGrabPos = false;
+            }
         }
 
-        if (!raycastHitWithinReach) { PlaceCrossHair(rayHit, false); }
 
-        //Debug.DrawRay(pos, rayDir * grabDistance, hitColor, 0.1f);
+        if (!raycastHitWithinReach) { PlaceCrossHair(rayHit, false); }
     }
 
     private void PlaceCrossHair(RaycastHit hit, bool hitFound = true)
@@ -175,7 +184,6 @@ public class Grabber : MonoBehaviour
 public class Hand
 {
     public bool isGrabbing = false;
-    //public Vector3 grabPos { get { return graphics.transform.position; } }
     public Vector3 grabPos { get; private set; }
     public Vector3 grabNormal;
     public GameObject graphics = null;
@@ -232,7 +240,7 @@ public class Hand
 
         // If grabbing, destroy the spring
         grabber.OnRelease?.Invoke(isLeftHand);
-        
+
     }
 
     #region Animation
@@ -259,8 +267,8 @@ public class Hand
 
         // BEZIER CURVE
         Vector3 a = origin;
-        Vector3 b = grabPos + 
-                                (grabber.transform.position - grabPos).normalized 
+        Vector3 b = grabPos +
+                                (grabber.transform.position - grabPos).normalized
                                 * grabber.beforeGrabPos_Length; // Before the grabbing "animation"
         Vector3 c = grabPos
                             + grabNormal * grabber.overGrabPos_Height; // Over the grabPos
@@ -290,7 +298,6 @@ public class Hand
             // If retracting hand, calculate the path anew
             if (!activeGrab)
             {
-                //destination = grabber.transform.position + (isLeftHand ? grabber.idleHandPos_L : grabber.idleHandPos_R).localPosition;
                 destination = (isLeftHand ? grabber.idleHandPos_L : grabber.idleHandPos_R).position;
                 path = destination - origin;
 

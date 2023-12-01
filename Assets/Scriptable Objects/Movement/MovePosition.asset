@@ -29,4 +29,9 @@ MonoBehaviour:
   climbing_jump_power: 2
   falling_movementSpeed: 2
   fall_drag: 0
-  carryOverVelocityDecay: 0.9
+  falling_timeBeforeFullSpeedTransition: 2
+  jumping_movementSpeed: 2
+  jump_drag: 0
+  jumping_carryOverVelocityTime: 2
+  jumping_standStill_timeBeforeSpeedTransition: 0.5
+  jumping_standStill_timeUntilFullTransition: 2

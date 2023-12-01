@@ -6,7 +6,7 @@ using UnityEngine;
 
 public enum MoveType
 {
-    walking, climbing, falling
+    walking, climbing, jumping, falling
 }
 
 public class MovementMode
@@ -284,7 +284,7 @@ public class ClimbingPositionChange : MovePosition
 
             // Add it to the final velocity
             hv = legalVelocity + overVelocity;
-            Debug.Log("Velocity: " + hv.magnitude);
+            //Debug.Log("Velocity: " + hv.magnitude);
             hv = new Vector3(hv.x, mover.rb.velocity.y, hv.z);
 
             mover.rb.velocity = hv;
@@ -295,10 +295,10 @@ public class ClimbingPositionChange : MovePosition
 
 public class FallingMode : MovePosition
 {
-    Vector3 carryOverVelocity;
-    float carryOverMagnitude = 1f;
-    float timeSinceFallingBegun;
-    float carryOverTime;
+    float timeSinceAirborne;
+    float fullFallSpeed_time;
+
+    float usedMoveSpeed;
 
     public FallingMode(PlayerMover _mover) : base(_mover) { }
 
@@ -306,11 +306,10 @@ public class FallingMode : MovePosition
     {
         mover.rb.drag = stats.fall_drag;
 
-        // Save carry over Velocity
-        carryOverVelocity = mover.currentMoveVelocityForce;
-        carryOverMagnitude = 1f;
-        carryOverTime = stats.falling_carryOverVelocityTime;
-        timeSinceFallingBegun = 0f;
+        usedMoveSpeed = stats.walking_speed;
+
+        fullFallSpeed_time = stats.falling_timeBeforeFullSpeedTransition;
+        timeSinceAirborne = 0f;
     }
 
     public override void Move(Vector2 moveInput)
@@ -320,23 +319,24 @@ public class FallingMode : MovePosition
         Vector3 changeVector = mover.transform.right * moveInput.x
                              + mover.transform.forward * moveInput.y;
 
+        // Change used move speed
+        if ((timeSinceAirborne < fullFallSpeed_time))
+        {
+            usedMoveSpeed = Mathf.Lerp(stats.walking_speed,
+                                       stats.falling_movementSpeed,
+                                       Easing.EaseType(
+                                                       (timeSinceAirborne / fullFallSpeed_time),
+                                                       //((timeSinceAirborne - diff) / (fullFallSpeed_time - diff)),
+                                                       Easing.Type.easeInOutSine));
 
-        //changeVector = changeVector * Time.fixedDeltaTime * stats.falling_movementSpeed;
-        changeVector = changeVector * stats.falling_movementSpeed + carryOverVelocity * carryOverMagnitude;
-        //changeVector = changeVector * stats.falling_movementSpeed;
+            timeSinceAirborne += Time.fixedDeltaTime;
+        }
+
+
+        changeVector = changeVector * usedMoveSpeed;
         changeVector *= Time.fixedDeltaTime;
 
-        Debug.Log("Carry over velocity: " + carryOverVelocity * carryOverMagnitude);
 
-        // Decay falling momentum
-        if (timeSinceFallingBegun < carryOverTime)
-        {
-            timeSinceFallingBegun += Time.fixedDeltaTime;
-
-            //carryOverMagnitude = Mathf.Lerp(1f, 0f, (timeSinceFallingBegun / carryOverTime));
-            carryOverMagnitude = Easing.EaseOutQuart(1 - (timeSinceFallingBegun / carryOverTime));
-            Debug.Log("Carry Magnitude: " + carryOverMagnitude);
-        }
 
         Vector3 nextPos = mover.transform.position + changeVector;
         mover.rb.MovePosition(nextPos);
@@ -344,7 +344,7 @@ public class FallingMode : MovePosition
 
 }
 
-public class FallingMode_2 : MovePosition
+public class JumpingMode : MovePosition
 {
     Vector3 carryOverVelocity;
     float carryOverMagnitude = 1f;
@@ -359,21 +359,21 @@ public class FallingMode_2 : MovePosition
     float fullFallSpeed_time = 0f;
     float diff = 0f;
 
-    public FallingMode_2(PlayerMover _mover) : base(_mover) { }
+    public JumpingMode(PlayerMover _mover) : base(_mover) { }
 
     public override void Enter()
     {
-        mover.rb.drag = stats.fall_drag;
+        mover.rb.drag = stats.jump_drag;
 
         originalCarryOverSpeed = mover.currentMoveVelocityForce.magnitude;
         carryOverMagnitude = 1f;
 
-        carryOverTime = stats.falling_carryOverVelocityTime;
+        carryOverTime = stats.jumping_carryOverVelocityTime;
         timeSinceAirborne = 0f;
 
         begunFromStandStill = false;
-        timeBeforeSpeedChange = stats.falling_standStill_timeBeforeSpeedTransition;
-        fullFallSpeed_time = stats.falling_standStill_timeUntilFullTransition;
+        timeBeforeSpeedChange = stats.jumping_standStill_timeBeforeSpeedTransition;
+        fullFallSpeed_time = stats.jumping_standStill_timeUntilFullTransition;
         diff = fullFallSpeed_time - timeBeforeSpeedChange;
 
         carryOverVelocity = mover.currentMoveVelocityForce;
@@ -385,14 +385,14 @@ public class FallingMode_2 : MovePosition
         {
             // Allow velocity change for X time
             begunFromStandStill = true;
-            timeBeforeSpeedChange = stats.falling_standStill_timeBeforeSpeedTransition;
+            timeBeforeSpeedChange = stats.jumping_standStill_timeBeforeSpeedTransition;
 
             usedMoveSpeed = stats.walking_speed;
         }
         else
         {
             carryOverVelocity = mover.currentMoveVelocityForce;
-            usedMoveSpeed = stats.falling_movementSpeed;
+            usedMoveSpeed = stats.jumping_movementSpeed;
         }
     }
 
@@ -443,20 +443,13 @@ public class FallingMode_2 : MovePosition
 
         // Change used move speed
         if (begunFromStandStill && (timeSinceAirborne < fullFallSpeed_time))
-            //if ((timeSinceAirborne < fullFallSpeed_time))
         {
-            //if (timeSinceAirborne < timeBeforeSpeedChange)
-            //{
-            //}
-            //else
-            //{
-                usedMoveSpeed = Mathf.Lerp(stats.walking_speed,
-                                           stats.falling_movementSpeed,
-                                           Easing.EaseType(
-                                                           (timeSinceAirborne / timeBeforeSpeedChange),
-                                                           //((timeSinceAirborne - diff) / (fullFallSpeed_time - diff)),
-                                                           Easing.Type.easeInOutSine));
-            //}
+            usedMoveSpeed = Mathf.Lerp(stats.walking_speed,
+                                       stats.jumping_movementSpeed,
+                                       Easing.EaseType(
+                                                       //(timeSinceAirborne / timeBeforeSpeedChange),
+                                                       ((timeSinceAirborne - diff) / (fullFallSpeed_time - diff)),
+                                                       Easing.Type.easeInOutSine));
         }
 
         timeSinceAirborne += Time.fixedDeltaTime;
@@ -469,7 +462,6 @@ public class FallingMode_2 : MovePosition
         {
             // Clamp it
             changeVector = changeVector.normalized * originalCarryOverSpeed;
-            Debug.Log("Clamping speed");
         }
 
         changeVector *= Time.fixedDeltaTime;

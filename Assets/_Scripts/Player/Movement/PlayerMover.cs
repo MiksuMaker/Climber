@@ -27,6 +27,7 @@ public class PlayerMover : MonoBehaviour
 
     MovementMode walkingMode;
     MovementMode climbingMode;
+    MovementMode jumpingMode;
     MovementMode fallingMode;
 
     #endregion
@@ -48,8 +49,9 @@ public class PlayerMover : MonoBehaviour
 
         climbingMode = new ClimbingPositionChange(this);
 
-        //fallingMode = new FallingMode(this);
-        fallingMode = new FallingMode_2(this);
+        fallingMode = new FallingMode(this);
+
+        jumpingMode = new JumpingMode(this);
 
         currentMode = walkingMode;
     }
@@ -85,6 +87,9 @@ public class PlayerMover : MonoBehaviour
             case MoveType.climbing:
                 currentMode = climbingMode;
                 break;
+            case MoveType.jumping:
+                currentMode = jumpingMode;
+                break;
             case MoveType.falling:
                 currentMode = fallingMode;
                 break;
@@ -115,7 +120,7 @@ public class PlayerMover : MonoBehaviour
         // Check if not grounded
         if (!CheckIfGrounded())
         {
-            ChangeMovementMode(MoveType.falling);
+            ChangeMovementMode(MoveType.jumping);
         }
         else
         {
@@ -139,12 +144,22 @@ public class PlayerMover : MonoBehaviour
                 break;
             // =================
 
+            case (MoveType.jumping):
+                if (CheckIfGrounded()) { ChangeMovementMode(MoveType.walking); }
+                break;
+            // =================
+
             case (MoveType.falling):
                 if (CheckIfGrounded()) { ChangeMovementMode(MoveType.walking); }
                 break;
                 // =================
         }
     }
+
+    //public bool IsCurrentState(MoveType type)
+    //{
+    //    return (currentMoveType == type);
+    //}
     #endregion
 
     public bool DetectCollisionInDirection(Vector3 dir)

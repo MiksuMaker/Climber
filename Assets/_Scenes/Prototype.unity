@@ -2225,6 +2225,7 @@ MonoBehaviour:
   moveStats: {fileID: 11400000, guid: afea28b0d1c3e3a429ecdb4874cbcb68, type: 2}
   grabber: {fileID: 0}
   rb: {fileID: 0}
+  currentMoveVelocityForce: {x: 0, y: 0, z: 0}
   groundCheckPos: {x: 0, y: 0.1, z: 0}
   groundCheckRadius: 0.4
   currentMoveType: 0
@@ -2256,6 +2257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputComponent: {fileID: 11400000, guid: 9d5db5b7c9c68414b9588e7937733849, type: 2}
+  infiniteJumps: 1
   jumpPower: 4
 --- !u!114 &2108108905
 MonoBehaviour:
@@ -2282,6 +2284,7 @@ MonoBehaviour:
   beforeGrabPos_Length: 0.3
   overGrabPos_Height: 0.5
   grabbing_Time: 0.2
+  retract_Time: 1
   grabCurve:
     serializedVersion: 2
     m_Curve:
@@ -2315,39 +2318,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  retractCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 0.6032376
-      value: 0.32560918
-      inSlope: 1.3649074
-      outSlope: 1.3649074
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.19137159
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0.17998432
-      outSlope: 0.17998432
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 1
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  underLedgeGrab_On: 0
 --- !u!114 &2108108906
 MonoBehaviour:
   m_ObjectHideFlags: 0

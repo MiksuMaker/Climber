@@ -6,7 +6,10 @@ public class Jumper : MonoBehaviour
 {
     #region Properties
     [SerializeField] PlayerInputObject inputComponent;
+    PlayerMover mover;
     Rigidbody rb;
+
+    [SerializeField] bool infiniteJumps = false;
 
     [Header("Jumping")]
     [SerializeField] float jumpPower = 10f;
@@ -17,6 +20,7 @@ public class Jumper : MonoBehaviour
     {
         // Fetch references
         rb = GetComponent<Rigidbody>();
+        mover = GetComponent<PlayerMover>();
     }
 
     private void FixedUpdate()
@@ -31,6 +35,16 @@ public class Jumper : MonoBehaviour
         if (!inputComponent.jumpValue) { return; }
 
         inputComponent.jumpValue = false;
+
+        // Check if jumping is permitted AND change mode
+        if (infiniteJumps || mover.CheckIfGrounded()) 
+        {
+            mover.ChangeMovementMode(MoveType.jumping); 
+        }
+        else 
+        { 
+            return; 
+        }
 
         Jump();
     }

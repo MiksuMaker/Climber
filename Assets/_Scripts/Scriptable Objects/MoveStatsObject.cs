@@ -29,11 +29,18 @@ public class MoveStatsObject : ScriptableObject
     public Vector3 climbing_jump_dir = new Vector3(0f, 1f, 0.5f);
     public float climbing_jump_power = 2f;
 
+
     [Header("FALLING")]
     public float falling_movementSpeed = 2f;
-    [SerializeField, Range(0f, 1f)] public float fall_drag = 1f;
-    public float falling_carryOverVelocityTime = 1f;
+    [SerializeField, Range(0f, 1f)] public float fall_drag = 0f;
     [Space]
-    public float falling_standStill_timeBeforeSpeedTransition = 1f;
-    public float falling_standStill_timeUntilFullTransition = 2f;
+    public float falling_timeBeforeFullSpeedTransition = 2f;
+
+    [Header("JUMPING")]
+    public float jumping_movementSpeed = 2f;
+    [SerializeField, Range(0f, 1f)] public float jump_drag = 0f;
+    public float jumping_carryOverVelocityTime = 2f;
+    [Space]
+    public float jumping_standStill_timeBeforeSpeedTransition = 0.5f;
+    public float jumping_standStill_timeUntilFullTransition = 2f;
 }

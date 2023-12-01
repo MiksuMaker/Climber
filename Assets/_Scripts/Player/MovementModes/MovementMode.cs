@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -20,6 +21,12 @@ public class MovementMode
 
     public virtual void Enter() { }
 
+
+    public virtual void UpdateCurrentVelocity(Vector3 moveVector)
+    {
+        mover.currentMoveVelocityForce = moveVector;
+    }
+
     public virtual void Move(Vector2 moveInput) { }
     public virtual void Move(Vector2 moveInput, float climbBoost) { }
 }
@@ -30,37 +37,36 @@ public class MovePosition : MovementMode
     {
     }
 
-    public override void Enter() 
+    public override void Enter()
     {
         mover.rb.drag = stats.walk_drag;
     }
 
     public override void Move(Vector2 moveInput)
     {
-        moveInput = moveInput.normalized;
-
-        Vector3 changeVector = mover.transform.right * moveInput.x 
-                             + mover.transform.forward * moveInput.y;
-        changeVector = changeVector * Time.fixedDeltaTime * stats.walking_speed;
-
-        Vector3 nextPos = mover.transform.position + changeVector;
-        mover.rb.MovePosition(nextPos);
+        Move(moveInput, 0f);
     }
 
     public override void Move(Vector2 moveInput, float climbBoost)
     {
+        if (moveInput == Vector2.zero) { base.UpdateCurrentVelocity(Vector3.zero); return; }
+
         moveInput = moveInput.normalized;
 
         Vector3 changeVector = mover.transform.right * moveInput.x
                              + Vector3.up * climbBoost
                              + mover.transform.forward * moveInput.y;
-        changeVector = changeVector * Time.fixedDeltaTime * stats.walking_speed;
+
+        changeVector *= stats.walking_speed;
+        base.UpdateCurrentVelocity(changeVector); // Update Velocity
+        changeVector *= Time.fixedDeltaTime;
 
         Vector3 nextPos = mover.transform.position + changeVector;
         mover.rb.MovePosition(nextPos);
     }
 }
 
+#region Physics based movement
 public class AddForce : MovementMode
 {
     protected float physicsMultiplier = 10f;
@@ -73,7 +79,7 @@ public class AddForce : MovementMode
 
         moveInput = moveInput.normalized;
 
-        Vector3 forceVector = mover.transform.right * moveInput.x 
+        Vector3 forceVector = mover.transform.right * moveInput.x
                             + mover.transform.forward * moveInput.y;
         forceVector = forceVector * Time.fixedDeltaTime * stats.walking_speed * physicsMultiplier;
 
@@ -119,7 +125,7 @@ public class ClimbingMoveMode : AddForce
     public override void Move(Vector2 moveInput)
     {
         // First check if touching ground
-        if (mover.CheckIfGrounded()) 
+        if (mover.CheckIfGrounded())
         {
             #region Grounded movement
             moveInput = moveInput.normalized;
@@ -162,10 +168,11 @@ public class ClimbingMoveMode : AddForce
 
         if (mover.DetectCollisionInDirection(inputVector))
         {
-            
+
         }
     }
 }
+#endregion
 
 public class ClimbingPositionChange : MovePosition
 {
@@ -178,6 +185,8 @@ public class ClimbingPositionChange : MovePosition
 
     public override void Move(Vector2 moveInput)
     {
+        if (moveInput == Vector2.zero) { return; }
+
         moveInput = moveInput.normalized;
 
         Vector3 pos = mover.transform.position;
@@ -193,7 +202,7 @@ public class ClimbingPositionChange : MovePosition
             if (mover.CheckIfOverCOP())
             {
                 climbBoost = stats.climbing_vertical_over;
-            } 
+            }
             else
             {
                 climbBoost = stats.climbing_vertical_boost;
@@ -234,17 +243,21 @@ public class ClimbingPositionChange : MovePosition
         {
             // If so, add towards power
             forwardPower = stats.climbing_horizontal_towards;
-        } else { forwardPower = stats.climbing_horizontal_away; }
+        }
+        else { forwardPower = stats.climbing_horizontal_away; }
 
         if ((sideDOT * sidewaysInput) > 0f)
         {
             sidewayPower = stats.climbing_horizontal_towards;
-        } else { sidewayPower = stats.climbing_horizontal_away; }
+        }
+        else { sidewayPower = stats.climbing_horizontal_away; }
         #endregion
 
         Vector3 moveVector = right * sidewayPower * sidewaysInput
                            + Vector3.up * climbBoost
                            + forward * forwardPower * forwardsInput;
+
+        base.UpdateCurrentVelocity(moveVector);
 
         moveVector = pos + moveVector * Time.fixedDeltaTime;
         mover.rb.MovePosition(moveVector);
@@ -282,11 +295,22 @@ public class ClimbingPositionChange : MovePosition
 
 public class FallingMode : MovePosition
 {
+    Vector3 carryOverVelocity;
+    float carryOverMagnitude = 1f;
+    float timeSinceFallingBegun;
+    float carryOverTime;
+
     public FallingMode(PlayerMover _mover) : base(_mover) { }
 
     public override void Enter()
     {
         mover.rb.drag = stats.fall_drag;
+
+        // Save carry over Velocity
+        carryOverVelocity = mover.currentMoveVelocityForce;
+        carryOverMagnitude = 1f;
+        carryOverTime = stats.falling_carryOverVelocityTime;
+        timeSinceFallingBegun = 0f;
     }
 
     public override void Move(Vector2 moveInput)
@@ -295,7 +319,161 @@ public class FallingMode : MovePosition
 
         Vector3 changeVector = mover.transform.right * moveInput.x
                              + mover.transform.forward * moveInput.y;
-        changeVector = changeVector * Time.fixedDeltaTime * stats.falling_movementSpeed;
+
+
+        //changeVector = changeVector * Time.fixedDeltaTime * stats.falling_movementSpeed;
+        changeVector = changeVector * stats.falling_movementSpeed + carryOverVelocity * carryOverMagnitude;
+        //changeVector = changeVector * stats.falling_movementSpeed;
+        changeVector *= Time.fixedDeltaTime;
+
+        Debug.Log("Carry over velocity: " + carryOverVelocity * carryOverMagnitude);
+
+        // Decay falling momentum
+        if (timeSinceFallingBegun < carryOverTime)
+        {
+            timeSinceFallingBegun += Time.fixedDeltaTime;
+
+            //carryOverMagnitude = Mathf.Lerp(1f, 0f, (timeSinceFallingBegun / carryOverTime));
+            carryOverMagnitude = Easing.EaseOutQuart(1 - (timeSinceFallingBegun / carryOverTime));
+            Debug.Log("Carry Magnitude: " + carryOverMagnitude);
+        }
+
+        Vector3 nextPos = mover.transform.position + changeVector;
+        mover.rb.MovePosition(nextPos);
+    }
+
+}
+
+public class FallingMode_2 : MovePosition
+{
+    Vector3 carryOverVelocity;
+    float carryOverMagnitude = 1f;
+    float timeSinceAirborne;
+    float carryOverTime;
+
+    float originalCarryOverSpeed;
+
+    float usedMoveSpeed;
+    bool begunFromStandStill = false;
+    float timeBeforeSpeedChange = 0f;
+    float fullFallSpeed_time = 0f;
+    float diff = 0f;
+
+    public FallingMode_2(PlayerMover _mover) : base(_mover) { }
+
+    public override void Enter()
+    {
+        mover.rb.drag = stats.fall_drag;
+
+        originalCarryOverSpeed = mover.currentMoveVelocityForce.magnitude;
+        carryOverMagnitude = 1f;
+
+        carryOverTime = stats.falling_carryOverVelocityTime;
+        timeSinceAirborne = 0f;
+
+        begunFromStandStill = false;
+        timeBeforeSpeedChange = stats.falling_standStill_timeBeforeSpeedTransition;
+        fullFallSpeed_time = stats.falling_standStill_timeUntilFullTransition;
+        diff = fullFallSpeed_time - timeBeforeSpeedChange;
+
+        carryOverVelocity = mover.currentMoveVelocityForce;
+
+        //timeBeforeSpeedChange = stats.falling_standStill_timeBeforeSpeedTransition;
+        //usedMoveSpeed = stats.walking_speed;
+
+        if (carryOverVelocity == Vector3.zero)
+        {
+            // Allow velocity change for X time
+            begunFromStandStill = true;
+            timeBeforeSpeedChange = stats.falling_standStill_timeBeforeSpeedTransition;
+
+            usedMoveSpeed = stats.walking_speed;
+        }
+        else
+        {
+            carryOverVelocity = mover.currentMoveVelocityForce;
+            usedMoveSpeed = stats.falling_movementSpeed;
+        }
+    }
+
+    public override void Move(Vector2 moveInput)
+    {
+        #region V1
+        //moveInput = moveInput.normalized;
+
+        //Vector3 changeVector = mover.transform.right * moveInput.x
+        //                     + mover.transform.forward * moveInput.y;
+
+
+        ////changeVector = changeVector * Time.fixedDeltaTime * stats.falling_movementSpeed;
+        //changeVector = changeVector * stats.falling_movementSpeed + carryOverVelocity * carryOverMagnitude;
+        ////changeVector = changeVector * stats.falling_movementSpeed;
+        //changeVector *= Time.fixedDeltaTime;
+
+        //Debug.Log("Carry over velocity: " + carryOverVelocity * carryOverMagnitude);
+
+        //// Decay falling momentum
+        //if (timeSinceFallingBegun < carryOverTime)
+        //{
+        //    timeSinceFallingBegun += Time.fixedDeltaTime;
+
+        //    //carryOverMagnitude = Mathf.Lerp(1f, 0f, (timeSinceFallingBegun / carryOverTime));
+        //    carryOverMagnitude = Easing.EaseOutQuart(1 - (timeSinceFallingBegun / carryOverTime));
+        //    Debug.Log("Carry Magnitude: " + carryOverMagnitude);
+        //}
+
+        //Vector3 nextPos = mover.transform.position + changeVector;
+        //mover.rb.MovePosition(nextPos);
+        #endregion
+
+        moveInput = moveInput.normalized;
+
+        Vector3 changeVector = mover.transform.right * moveInput.x
+                             + mover.transform.forward * moveInput.y;
+
+        //Take Carry Over Velocity into account
+        if (!begunFromStandStill && (timeSinceAirborne < carryOverTime))
+        {
+            carryOverMagnitude = Easing.EaseOutQuart(1 - (timeSinceAirborne / carryOverTime));
+
+            carryOverVelocity *= carryOverMagnitude;
+
+            //Debug.Log("Carry over Velocity: " + carryOverVelocity);
+        }
+
+        // Change used move speed
+        if (begunFromStandStill && (timeSinceAirborne < fullFallSpeed_time))
+            //if ((timeSinceAirborne < fullFallSpeed_time))
+        {
+            //if (timeSinceAirborne < timeBeforeSpeedChange)
+            //{
+            //}
+            //else
+            //{
+                usedMoveSpeed = Mathf.Lerp(stats.walking_speed,
+                                           stats.falling_movementSpeed,
+                                           Easing.EaseType(
+                                                           (timeSinceAirborne / timeBeforeSpeedChange),
+                                                           //((timeSinceAirborne - diff) / (fullFallSpeed_time - diff)),
+                                                           Easing.Type.easeInOutSine));
+            //}
+        }
+
+        timeSinceAirborne += Time.fixedDeltaTime;
+
+        changeVector = changeVector * usedMoveSpeed + carryOverVelocity;
+        //changeVector = changeVector * usedMoveSpeed;
+
+        // Limit Vector not to go over OriginalMagnitude
+        if (!begunFromStandStill && changeVector.sqrMagnitude > (originalCarryOverSpeed * originalCarryOverSpeed))
+        {
+            // Clamp it
+            changeVector = changeVector.normalized * originalCarryOverSpeed;
+            Debug.Log("Clamping speed");
+        }
+
+        changeVector *= Time.fixedDeltaTime;
+
 
         Vector3 nextPos = mover.transform.position + changeVector;
         mover.rb.MovePosition(nextPos);

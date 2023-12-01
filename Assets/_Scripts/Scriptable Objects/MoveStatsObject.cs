@@ -32,4 +32,8 @@ public class MoveStatsObject : ScriptableObject
     [Header("FALLING")]
     public float falling_movementSpeed = 2f;
     [SerializeField, Range(0f, 1f)] public float fall_drag = 1f;
+    public float falling_carryOverVelocityTime = 1f;
+    [Space]
+    public float falling_standStill_timeBeforeSpeedTransition = 1f;
+    public float falling_standStill_timeUntilFullTransition = 2f;
 }

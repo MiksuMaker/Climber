@@ -6,7 +6,7 @@ static public class Easing
 {
     public enum Type
     {
-        inOutBack, inOutExpo, inOutBackExpoHybrid, inExpo, inQuart, outQuart, easeInCirc,
+        inOutBack, inOutExpo, inOutBackExpoHybrid, inExpo, inQuart, outQuart, easeInCirc, easeInOutSine
     }
 
     static public float EaseType(float x, Type type)
@@ -20,6 +20,7 @@ static public class Easing
             case Type.inQuart: return EaseInQuart(x);
             case Type.outQuart: return EaseOutQuart(x);
             case Type.easeInCirc: return EaseInCirc(x);
+            case Type.easeInOutSine: return EaseInOutSine(x);
             default: return 0;
         }
     }
@@ -69,5 +70,10 @@ static public class Easing
     static public float EaseInCirc(float x)
     {
         return 1 - Mathf.Sqrt(1 - (x * x));
+    }
+
+    static public float EaseInOutSine(float x)
+    {
+        return -(Mathf.Cos(Mathf.PI * x) - 1) / 2f;
     }
 }

@@ -12,17 +12,12 @@ public class PlayerMover : MonoBehaviour
     public Grabber grabber;
     public Rigidbody rb;
 
-    //[Header("Walking")]
-    //[SerializeField] public float walking_movementSpeed = 4f;
-    //[Header("Climbing")]
-    //[SerializeField] public float climbing_horizontalSpeed = 2f;
-    //[SerializeField] public float climbing_verticalSpeed = 2f;
-    //[SerializeField] public float velocityLimit = 2f;
-    //[Tooltip("0 = No damping, 1 = No limitation")]
-    //[SerializeField, Range(0f, 1f)] public float limitMultiplier = 1f;
-    //[Header("Falling")]
-    //[SerializeField] public float falling_movementSpeed = 2f;
+    //[HideInInspector]
+    [Header("Current Velocities")]
+    public Vector3 currentMoveVelocityForce = Vector3.zero;
+    //public Vector3 currentRBVelocity = Vector3.zero;
 
+    [Header("Ground Check")]
     [SerializeField] Vector3 groundCheckPos = new Vector3(0f, 0.8f);
     [SerializeField] float groundCheckRadius = 0.5f;
 
@@ -53,13 +48,17 @@ public class PlayerMover : MonoBehaviour
 
         climbingMode = new ClimbingPositionChange(this);
 
-        fallingMode = new FallingMode(this);
+        //fallingMode = new FallingMode(this);
+        fallingMode = new FallingMode_2(this);
 
         currentMode = walkingMode;
     }
 
     private void FixedUpdate()
     {
+        //CheckIfFalling();
+        DoStateCheck();
+
         HandleMovement(inputComponent.moveValue);
     }
     #endregion
@@ -67,7 +66,7 @@ public class PlayerMover : MonoBehaviour
     #region Movement
     private void HandleMovement(Vector2 moveInput)
     {
-        if (moveInput == Vector2.zero) { return; }
+        //if (moveInput == Vector2.zero) { return; }
 
         currentMode.Move(moveInput);
     }
@@ -94,6 +93,8 @@ public class PlayerMover : MonoBehaviour
                 Debug.Log("This movement type has not been implemented yet!");
                 break;
         }
+
+        currentMode.Enter();
     }
 
     private void UpdateClimbingStatus(bool isClimbing)
@@ -102,12 +103,46 @@ public class PlayerMover : MonoBehaviour
         if (isClimbing)
         {
             ChangeMovementMode(MoveType.climbing);
-            currentMode.Enter();
         }
         else
         {
             ChangeMovementMode(MoveType.walking);
-            currentMode.Enter();
+        }
+    }
+
+    private void CheckIfFalling()
+    {
+        // Check if not grounded
+        if (!CheckIfGrounded())
+        {
+            ChangeMovementMode(MoveType.falling);
+        }
+        else
+        {
+            ChangeMovementMode(MoveType.walking);
+        }
+    }
+
+    private void DoStateCheck()
+    {
+        // Do state checks based on current state
+
+        switch (currentMoveType)
+        {
+            case (MoveType.walking):
+                if (!CheckIfGrounded()) { ChangeMovementMode(MoveType.falling); }
+                break;
+            // =================
+
+            case (MoveType.climbing):
+
+                break;
+            // =================
+
+            case (MoveType.falling):
+                if (CheckIfGrounded()) { ChangeMovementMode(MoveType.walking); }
+                break;
+                // =================
         }
     }
     #endregion

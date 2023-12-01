@@ -2343,8 +2343,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4b984bf52b8e464cb6b9e0e442a3530, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  grabber: {fileID: 0}
   defaultHand: {fileID: 11400000, guid: 129fd5d373922744d9b5c7b05d544cbb, type: 2}
   item_Left: {fileID: 0}
   item_Right: {fileID: 0}
   input: {fileID: 11400000, guid: 9d5db5b7c9c68414b9588e7937733849, type: 2}
-  itemInputHoldThreshold: 0.5
+  itemInputHoldThreshold: 0.15

@@ -24,14 +24,12 @@ public class ItemHandler : MonoBehaviour
     bool input_left_waitingToBeFired = false;
     bool input_right_waitingToBeFired = false;
 
-    bool input_left_holding = false;
-    bool input_right_holding = false;
     float left_pressdownTime = 0f;
     float right_pressdownTime = 0f;
 
     //[Header("Behaviours")]
     ItemBehavior handBehavior;
-    ItemBehavior swordBehavior;
+    ItemBehavior meleeWeaponBehavior;
     #endregion
 
     #region Setup
@@ -50,6 +48,9 @@ public class ItemHandler : MonoBehaviour
     private void SetupBehaviors()
     {
         handBehavior = new HandBehavior(this);
+
+        behavior_Left = handBehavior;
+        behavior_Right = handBehavior;
     }
 
     private void SetupEquipment()
@@ -87,16 +88,23 @@ public class ItemHandler : MonoBehaviour
         {
             // RELEASE
             // -> Check how long the mouse has been held for
-            if (isLeft) 
+            if (isLeft)
             {
                 if (input_left_waitingToBeFired) // Tap
-                { item_Left.Handle_Tap(); }
+                { behavior_Left.Handle_Tap(true); }
                 else // Release
-                { item_Left.Handle_Release(); }
+                { behavior_Left.Handle_Release(true); }
 
                 input_left_waitingToBeFired = false;
+            }
+            else
+            {
+                if (input_right_waitingToBeFired) // Tap
+                { behavior_Right.Handle_Tap(false); }
+                else // Release
+                { behavior_Right.Handle_Release(false); }
 
-                //Debug.Log("Time held down: " + left_pressdownTime.ToString("0.00"));
+                input_right_waitingToBeFired = false;
             }
         }
     }
@@ -110,25 +118,49 @@ public class ItemHandler : MonoBehaviour
             if (left_pressdownTime >= itemInputHoldThreshold)
             {
                 // Activate hold
-                item_Left.Handle_Hold();
+                behavior_Left.Handle_Hold(true);
                 input_left_waitingToBeFired = false;
             }
         }
+        if (input_right_waitingToBeFired)
+        {
+            right_pressdownTime += Time.deltaTime;
 
-        //if (input_right_holding)
-        //{
-        //    right_pressdownTime += Time.deltaTime;
-        //    if (right_pressdownTime >= itemInputHoldThreshold)
-        //    {
-        //        // Activate hold
-        //        item_Right.Handle_Hold();
-        //        input_right_holding = false;
-        //    }
-        //}
+            if (right_pressdownTime >= itemInputHoldThreshold)
+            {
+                // Activate hold
+                behavior_Right.Handle_Hold(false);
+                input_right_waitingToBeFired = false;
+            }
+        }
     }
     #endregion
 
     #region Items
+    public void EquipItem(ItemObject stats, bool isLeft)
+    {
+        // Change behavior
+        switch (stats.type)
+        {
+            case ItemType.hand:
+                GetHand(isLeft) = handBehavior;
+                break;
+            // ================
 
+            case ItemType.melee:
+
+                break;
+                // ================
+        }
+
+        // Update stats
+        GetHand(isLeft).Equip(isLeft, stats);
+    }
+
+    private ref ItemBehavior GetHand(bool isLeft)
+    {
+        if (isLeft) { return ref behavior_Left; }
+        else { return ref behavior_Right; }
+    }
     #endregion
 }

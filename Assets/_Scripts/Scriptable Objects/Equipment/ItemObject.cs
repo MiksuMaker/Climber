@@ -7,13 +7,16 @@ using UnityEngine;
 public class ItemObject : ScriptableObject
 {
     [SerializeField]
-    ItemType type;
+    public ItemType type;
 
-    public virtual void Equip() { }
+    public virtual void Equip(ItemHandler handler, bool forLeftHand) 
+    {
+        handler.EquipItem(this, forLeftHand);
+    }
 }
 
 public enum ItemType
 {
     hand,
-    sword,
+    melee,
 }

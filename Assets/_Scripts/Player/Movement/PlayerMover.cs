@@ -50,13 +50,10 @@ public class PlayerMover : MonoBehaviour
     private void SetupMovementModes()
     {
         walkingMode = new MovePosition(this);
-        //walkingMode = new AddForce(this);
-
-        //climbingMode = new AddForce(this);
-        //climbingMode = new ClimbingMoveMode(this);
-        //climbingMode = new MovePosition(this);
 
         climbingMode = new ClimbingPositionChange(this);
+
+        fallingMode = new FallingMode(this);
 
         currentMode = walkingMode;
     }
@@ -89,6 +86,9 @@ public class PlayerMover : MonoBehaviour
             case MoveType.climbing:
                 currentMode = climbingMode;
                 break;
+            case MoveType.falling:
+                currentMode = fallingMode;
+                break;
 
             default:
                 Debug.Log("This movement type has not been implemented yet!");
@@ -98,16 +98,16 @@ public class PlayerMover : MonoBehaviour
 
     private void UpdateClimbingStatus(bool isClimbing)
     {
+        // Detect if still touching ground
         if (isClimbing)
         {
-            // Detect if still touching ground
             ChangeMovementMode(MoveType.climbing);
-            rb.drag = moveStats.climb_drag;
+            currentMode.Enter();
         }
         else
         {
             ChangeMovementMode(MoveType.walking);
-            rb.drag = moveStats.walk_drag;
+            currentMode.Enter();
         }
     }
     #endregion

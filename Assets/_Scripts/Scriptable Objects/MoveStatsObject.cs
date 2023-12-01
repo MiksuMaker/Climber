@@ -31,4 +31,5 @@ public class MoveStatsObject : ScriptableObject
 
     [Header("FALLING")]
     public float falling_movementSpeed = 2f;
+    [SerializeField, Range(0f, 1f)] public float fall_drag = 1f;
 }

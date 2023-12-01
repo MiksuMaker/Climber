@@ -246,7 +246,6 @@ public class Hand
     #region Animation
     private void StartHandMovement(bool activeGrab)
     {
-        //Debug.Log(activeGrab);
         grabber.StartHandAnimation(GrabAnimator(activeGrab), ref grabAnimator);
     }
 
@@ -317,7 +316,6 @@ public class Hand
                 // Move the hand towards destination
                 realProgress = Easing.EaseOutQuart(progress);
                 graphics.transform.position = origin + (path * realProgress);
-
 
                 // Rotate
                 graphics.transform.rotation = Quaternion.Lerp(ogRot, desiredRot, realProgress);

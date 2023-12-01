@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public enum MoveType
@@ -17,6 +18,8 @@ public class MovementMode
         mover = _mover;
     }
 
+    public virtual void Enter() { }
+
     public virtual void Move(Vector2 moveInput) { }
     public virtual void Move(Vector2 moveInput, float climbBoost) { }
 }
@@ -25,6 +28,11 @@ public class MovePosition : MovementMode
 {
     public MovePosition(PlayerMover _mover) : base(_mover)
     {
+    }
+
+    public override void Enter() 
+    {
+        mover.rb.drag = stats.walk_drag;
     }
 
     public override void Move(Vector2 moveInput)
@@ -163,6 +171,11 @@ public class ClimbingPositionChange : MovePosition
 {
     public ClimbingPositionChange(PlayerMover _mover) : base(_mover) { }
 
+    public override void Enter()
+    {
+        mover.rb.drag = mover.moveStats.climb_drag;
+    }
+
     public override void Move(Vector2 moveInput)
     {
         moveInput = moveInput.normalized;
@@ -265,4 +278,27 @@ public class ClimbingPositionChange : MovePosition
 
         }
     }
+}
+
+public class FallingMode : MovePosition
+{
+    public FallingMode(PlayerMover _mover) : base(_mover) { }
+
+    public override void Enter()
+    {
+        mover.rb.drag = stats.fall_drag;
+    }
+
+    public override void Move(Vector2 moveInput)
+    {
+        moveInput = moveInput.normalized;
+
+        Vector3 changeVector = mover.transform.right * moveInput.x
+                             + mover.transform.forward * moveInput.y;
+        changeVector = changeVector * Time.fixedDeltaTime * stats.falling_movementSpeed;
+
+        Vector3 nextPos = mover.transform.position + changeVector;
+        mover.rb.MovePosition(nextPos);
+    }
+
 }

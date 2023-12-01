@@ -147,7 +147,7 @@ public class ItemHandler : MonoBehaviour
                 break;
             // ================
 
-            case ItemType.melee:
+            case ItemType.meleeWeapon:
 
                 break;
                 // ================

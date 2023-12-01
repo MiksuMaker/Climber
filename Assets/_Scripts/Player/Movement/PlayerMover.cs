@@ -155,11 +155,6 @@ public class PlayerMover : MonoBehaviour
                 // =================
         }
     }
-
-    //public bool IsCurrentState(MoveType type)
-    //{
-    //    return (currentMoveType == type);
-    //}
     #endregion
 
     public bool DetectCollisionInDirection(Vector3 dir)

@@ -20,8 +20,11 @@ public class Grabber : MonoBehaviour
     int grabbingLayerMask;
 
     [Header("Grabbing")]
-    [SerializeField] GameObject handGraphics;
-    [SerializeField] float grabDistance = 5f;
+    [SerializeField] public HandObject handObject;
+
+    //[SerializeField] GameObject handGraphics;
+    //[SerializeField] float grabDistance = 5f;
+
 
     bool raycastHitWithinReach = false;
     RaycastHit rayHit;
@@ -63,8 +66,8 @@ public class Grabber : MonoBehaviour
 
         grabbingLayerMask = ~LayerMask.GetMask("Player");
 
-        leftHand = new Hand(handGraphics, this);
-        rightHand = new Hand(handGraphics, this, false);
+        leftHand = new Hand(handObject.handGraphics, this);
+        rightHand = new Hand(handObject.handGraphics, this, false);
 
         inputComponent.leftMouseUpdate += UpdateLeftGrabbing;
         inputComponent.rightMouseUpdate += UpdateRightGrabbing;
@@ -88,14 +91,11 @@ public class Grabber : MonoBehaviour
     #region Aiming
     private void CheckGrabDistance()
     {
-        //Color hitColor = Color.red;
-
         Vector3 pos = head.transform.position;
-        //RaycastHit lastHit;
         raycastHitWithinReach = false;
         Vector3 rayDir = head.transform.forward;
         Ray ray = new Ray(pos, rayDir);
-        if (Physics.Raycast(ray, out rayHit, grabDistance, grabbingLayerMask))
+        if (Physics.Raycast(ray, out rayHit, handObject.grabDistance, grabbingLayerMask))
         {
 
             // Check if the normal is acceptable

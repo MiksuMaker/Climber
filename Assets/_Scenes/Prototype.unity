@@ -981,7 +981,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 717419546}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 672ce20aad735814e930ab580d521524, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -2274,9 +2274,7 @@ MonoBehaviour:
   inputComponent: {fileID: 11400000, guid: 9d5db5b7c9c68414b9588e7937733849, type: 2}
   head: {fileID: 717419546}
   crossHairObj: {fileID: 655034102}
-  handGraphics: {fileID: 6846403162465128039, guid: 84ca610760d160a4b9d629ff379ab90f,
-    type: 3}
-  grabDistance: 4
+  handObject: {fileID: 11400000, guid: 129fd5d373922744d9b5c7b05d544cbb, type: 2}
   isClimbing: 0
   center: {x: 0, y: 0, z: 0}
   idleHandPos_L: {fileID: 1131279282}
@@ -2331,9 +2329,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7370f3d4490a47468d2504074519136, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxDist: 2
-  minDist: 0
-  springForce: 20
-  damper: 20
-  massScale: 5
-  breakForce: 1500
+  spring: {fileID: 0}

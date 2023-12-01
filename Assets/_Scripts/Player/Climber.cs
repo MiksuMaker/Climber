@@ -8,18 +8,21 @@ public class Climber : MonoBehaviour
     Grabber grabber;
     Rigidbody rb;
 
-    Vector3 pullDir = Vector3.zero;
-    float distanceOfPull = 0f;
+    //Vector3 pullDir = Vector3.zero;
+    //float distanceOfPull = 0f;
 
-    [Header("Climbing Specs")]
-    [SerializeField] float maxDist = 1f;
-    [SerializeField] float minDist = 0f;
-    [SerializeField] float springForce = 5f;
-    [SerializeField] float damper = 5f;
-    [SerializeField] float massScale = 1f;
+    [SerializeField] SpringDataObject spring;
 
-    [Header("Extra")]
-    [SerializeField] float breakForce = 1f;
+
+    //[Header("Climbing Specs")]
+    //[SerializeField] float maxDist = 1f;
+    //[SerializeField] float minDist = 0f;
+    //[SerializeField] float springForce = 5f;
+    //[SerializeField] float damper = 5f;
+    //[SerializeField] float massScale = 1f;
+
+    //[Header("Extra")]
+    //[SerializeField] float breakForce = 1f;
 
     //[Header("Springs")]
     SpringJoint leftSpring;
@@ -33,6 +36,7 @@ public class Climber : MonoBehaviour
     private void Start()
     {
         grabber = GetComponent<Grabber>();
+        spring = grabber.handObject.spring;
         rb = GetComponent<Rigidbody>();
 
         // Assign delegates
@@ -61,13 +65,13 @@ public class Climber : MonoBehaviour
         joint.autoConfigureConnectedAnchor = false;
         joint.connectedAnchor = anchorPoint;
 
-        joint.maxDistance = maxDist; joint.minDistance = minDist;
+        joint.maxDistance = spring.maxDistance; joint.minDistance = spring.minDistance;
 
         // Spring values
-        joint.spring = springForce;
-        joint.damper = damper;
-        joint.massScale = massScale;
-        joint.breakForce = breakForce;
+        joint.spring = spring.springForce;
+        joint.damper = spring.damper;
+        joint.massScale = spring.massScale;
+        joint.breakForce = spring.breakForce;
 
         // Assign as known hand
         if (isLeftHand) { leftSpring = joint; leftSpringIntact = true; }
@@ -98,7 +102,7 @@ public class Climber : MonoBehaviour
 
         if (broken)
         {
-            msg += " has been broken at " + breakForce.ToString() + " force!";
+            //msg += " has been broken at " + breakForce.ToString() + " force!";
             Debug.Log(msg);
         }
     }

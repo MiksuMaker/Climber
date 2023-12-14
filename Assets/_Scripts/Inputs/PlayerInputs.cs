@@ -113,9 +113,9 @@ public class PlayerInputs : MonoBehaviour
     {
         if (Input.mouseScrollDelta.y != 0f) { Debug.Log("ScrollDelta: " + Input.mouseScrollDelta); }
 
-        if (Input.GetKeyDown(pickDropThrow_Left)) { inputComponent.LeftPickupInput = true; } 
-        else if (Input.GetKeyUp(pickDropThrow_Left)) { inputComponent.LeftPickupInput = false; }
-        if (Input.GetKeyDown(equipUnequip_Left)) { inputComponent.LeftEquipInput = true; }
+        if (Input.GetKeyDown(pickDropThrow_Left)) { inputComponent.RightPickupInput = true; } 
+        else if (Input.GetKeyUp(pickDropThrow_Left)) { inputComponent.RightPickupInput = false; }
+        if (Input.GetKeyDown(equipUnequip_Left)) { inputComponent.RightEquipInput = true; }
     }
 
     private void HandleOtherInput()

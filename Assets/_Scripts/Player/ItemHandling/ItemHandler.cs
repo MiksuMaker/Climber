@@ -34,12 +34,15 @@ public class ItemHandler : MonoBehaviour
     private void Start()
     {
         grabber = GetComponent<Grabber>();
+        looker = GetComponent<PlayerLooker>();
 
         input.leftHandUpdate += CheckHandInput;
         input.rightHandUpdate += CheckHandInput;
 
-        input.leftPickupItemUpdate += CheckPickupDropInput;
-        input.leftEquipItemEvent += EquipItem;
+        input.rightPickupItemUpdate += CheckPickupDropInput;
+        input.rightEquipItemEvent += EquipItem;
+
+        meleeWeaponBehavior = new MeleeWeaponBehavior(this);
 
         SetupInitialItems();
     }
@@ -124,7 +127,7 @@ public class ItemHandler : MonoBehaviour
             if (right_pressdownTime >= itemInputHoldThreshold)
             {
                 // Activate hold
-                left_Item.behavior.Handle_Hold(false);
+                right_Item.behavior.Handle_Hold(false);
                 input_right_waitingToBeFired = false;
             }
         }
@@ -140,14 +143,11 @@ public class ItemHandler : MonoBehaviour
         switch (stats.type)
         {
             case ItemType.hand:
-                //GetHand(isLeft) = handBehavior;
                 return handBehavior;
-                break;
             // ================
 
-            //case ItemType.meleeWeapon:
-            //    return
-            //    break;
+            case ItemType.meleeWeapon:
+                return meleeWeaponBehavior;
             // ================
 
             default:

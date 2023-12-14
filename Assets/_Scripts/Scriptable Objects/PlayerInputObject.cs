@@ -15,8 +15,8 @@ public class PlayerInputObject : ScriptableObject
 
     public delegate void ButtonEvent();
     public delegate void SidedButtonEvent(bool isLeft);
-    public SidedBoolUpdate leftPickupItemUpdate;
-    public SidedButtonEvent leftEquipItemEvent;
+    public SidedBoolUpdate rightPickupItemUpdate;
+    public SidedButtonEvent rightEquipItemEvent;
 
 
     public Vector2 moveValue = Vector3.zero;
@@ -32,12 +32,12 @@ public class PlayerInputObject : ScriptableObject
 
 
 
-    public bool LeftPickupInput { get { return leftPickupInput; } set { if (value != leftPickupInput) { leftPickupItemUpdate?.Invoke(true, value); } leftPickupInput = value; } }
-    private bool leftPickupInput = false;
+    public bool RightPickupInput { get { return rightPickupInput; } set { if (value != rightPickupInput) { rightPickupItemUpdate?.Invoke(false, value); } rightPickupInput = value; } }
+    private bool rightPickupInput = false;
 
     //public bool LeftEquipInput { get { return leftEquipInput; } set { if (value != leftEquipInput) { leftEquipItemEvent?.Invoke(); } leftEquipInput = value; } }
-    public bool LeftEquipInput { get { return leftEquipInput; } set { if (value == true) { leftEquipItemEvent?.Invoke(true); } leftEquipInput = false; } }
-    private bool leftEquipInput = false;
+    public bool RightEquipInput { get { return rightEquipInput; } set { if (value == true) { rightEquipItemEvent?.Invoke(false); } rightEquipInput = false; } }
+    private bool rightEquipInput = false;
 
     public int sensitivityInput { set { sensitivityUpdate?.Invoke(value); } }
 }

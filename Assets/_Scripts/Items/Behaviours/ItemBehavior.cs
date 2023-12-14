@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class ItemBehavior
 {
     protected ItemHandler handler;
+
+    public string name = "Default";
 
     public ItemBehavior(ItemHandler handler_)
     {

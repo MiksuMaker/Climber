@@ -111,7 +111,7 @@ public class PlayerInputs : MonoBehaviour
 
     private void HandleInventoryInput()
     {
-        if (Input.mouseScrollDelta.y != 0f) { Debug.Log("ScrollDelta: " + Input.mouseScrollDelta); }
+        if (Input.mouseScrollDelta.y != 0f) { inputComponent.MouseDelta = (int)Input.mouseScrollDelta.y; }
 
         if (Input.GetKeyDown(pickDropThrow_Left)) { inputComponent.RightPickupInput = true; } 
         else if (Input.GetKeyUp(pickDropThrow_Left)) { inputComponent.RightPickupInput = false; }

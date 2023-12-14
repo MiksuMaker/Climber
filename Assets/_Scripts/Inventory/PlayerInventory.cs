@@ -32,7 +32,10 @@ public class PlayerInventory : MonoBehaviour
     #endregion
 
     #region Item Handling
-
+    private void FixedUpdate()
+    {
+        Debug.Log("Continue: Set MouseDelta to have delegate event when mouseDelta changes");
+    }
 
     #endregion
 }

@@ -35,9 +35,11 @@ public class PlayerInputObject : ScriptableObject
     public bool RightPickupInput { get { return rightPickupInput; } set { if (value != rightPickupInput) { rightPickupItemUpdate?.Invoke(false, value); } rightPickupInput = value; } }
     private bool rightPickupInput = false;
 
-    //public bool LeftEquipInput { get { return leftEquipInput; } set { if (value != leftEquipInput) { leftEquipItemEvent?.Invoke(); } leftEquipInput = value; } }
     public bool RightEquipInput { get { return rightEquipInput; } set { if (value == true) { rightEquipItemEvent?.Invoke(false); } rightEquipInput = false; } }
     private bool rightEquipInput = false;
+
+    public int MouseDelta = 0;
+    //public int MouseDelta { get { return MouseDelta; } set { if (value != 0) {  } }
 
     public int sensitivityInput { set { sensitivityUpdate?.Invoke(value); } }
 }

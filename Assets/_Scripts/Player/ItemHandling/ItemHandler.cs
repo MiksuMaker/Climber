@@ -192,7 +192,8 @@ public class ItemHandler : MonoBehaviour
         else
         {
             // Try to drop item your holding
-            Debug.Log("Dropping item");
+            //Debug.Log("Dropping item");
+            GetItem(isLeft).Assign(defaultHand, GetBehavior(defaultHand));
         }
     }
 

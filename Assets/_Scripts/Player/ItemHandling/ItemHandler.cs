@@ -199,17 +199,6 @@ public class ItemHandler : MonoBehaviour
 
     private void PickupItem(bool isLeft)
     {
-        // Check if looking at an item in world
-        //ItemData item = CheckForItems();
-        //if (item != null)
-        //{
-        //    Debug.Log("Picking up item");
-        //}
-        //else
-        //{
-        //    Debug.Log("Nothing to pickup.");
-        //}
-
         LayerMask itemLayerMask = LayerMask.GetMask("Item");
 
         (Vector3, Vector3) look = looker.GetLookStats();

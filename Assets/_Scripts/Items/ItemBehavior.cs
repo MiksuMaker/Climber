@@ -15,7 +15,7 @@ public class ItemBehavior
     public virtual void Handle_Hold(bool isLeft) { }
     public virtual void Handle_Release(bool isLeft) { }
 
-    public virtual void Equip(bool isLeft, ItemObject stats) { }
+    public virtual void Equip(bool isLeft, ItemData stats) { }
 
     public virtual void Unequip(bool isLeft) { }
 }

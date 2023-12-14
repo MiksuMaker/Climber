@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Scriptable Objects/HandObject")]
-public class HandObject : ItemObject
+public class HandData : ItemData
 {
     [Header("Grabbing")]
     public float grabDistance = 4f;

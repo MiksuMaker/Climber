@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Scriptable Objects/EquipmentObject")]
-public class ItemObject : ScriptableObject
+public class ItemData : ScriptableObject
 {
     [SerializeField]
     public ItemType type;

@@ -20,7 +20,7 @@ public class Grabber : MonoBehaviour
     int grabbingLayerMask;
 
     [Header("Grabbing")]
-    [SerializeField] public HandObject handObject;
+    [SerializeField] public HandData handObject;
 
     //[SerializeField] GameObject handGraphics;
     //[SerializeField] float grabDistance = 5f;

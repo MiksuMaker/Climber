@@ -16,8 +16,8 @@ public class PlayerInputs : MonoBehaviour
     KeyCode hand_Left = KeyCode.Mouse0;
     KeyCode hand_Right = KeyCode.Mouse1;
 
-    KeyCode pickup_Left = KeyCode.E;
-    KeyCode equip_Left = KeyCode.F;
+    KeyCode pickDropThrow_Left = KeyCode.E;
+    KeyCode equipUnequip_Left = KeyCode.F;
 
     KeyCode minus = KeyCode.KeypadMinus;
     KeyCode plus = KeyCode.KeypadPlus;
@@ -113,6 +113,9 @@ public class PlayerInputs : MonoBehaviour
     {
         if (Input.mouseScrollDelta.y != 0f) { Debug.Log("ScrollDelta: " + Input.mouseScrollDelta); }
 
+        if (Input.GetKeyDown(pickDropThrow_Left)) { inputComponent.LeftPickupInput = true; } 
+        else if (Input.GetKeyUp(pickDropThrow_Left)) { inputComponent.LeftPickupInput = false; }
+        if (Input.GetKeyDown(equipUnequip_Left)) { inputComponent.LeftEquipInput = true; }
     }
 
     private void HandleOtherInput()

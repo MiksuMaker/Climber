@@ -8,15 +8,11 @@ public class ItemHandler : MonoBehaviour
     [HideInInspector]
     public Grabber grabber;
 
-    [SerializeField] HandObject defaultHand;
+    [SerializeField] HandData defaultHand;
 
-    [Header("Hands")]
-    [SerializeField] public ItemObject item_Left;
-    [SerializeField] public ItemObject item_Right;
-
-    [Header("Behaviors")]
-    ItemBehavior behavior_Left;
-    ItemBehavior behavior_Right;
+    [Header("Items in Use")]
+    [SerializeField] public ItemInUse left_Item;
+    [SerializeField] public ItemInUse right_Item;
 
     [Header("Inputs")]
     [SerializeField] PlayerInputObject input;
@@ -37,26 +33,27 @@ public class ItemHandler : MonoBehaviour
     {
         grabber = GetComponent<Grabber>();
 
-        input.leftHandUpdate += CheckLeftInput;
-        input.rightHandUpdate += CheckRightInput;
+        input.leftHandUpdate += CheckHandInput;
+        input.rightHandUpdate += CheckHandInput;
 
-        SetupBehaviors();
+        input.leftPickupItemUpdate += CheckPickupDropInput;
+        input.leftEquipItemEvent += EquipItem;
 
-        SetupEquipment();
+        SetupInitialItems();
     }
 
-    private void SetupBehaviors()
+    private void SetupInitialItems()
     {
+        left_Item = new ItemInUse();
+        right_Item = new ItemInUse();
+
         handBehavior = new HandBehavior(this);
 
-        behavior_Left = handBehavior;
-        behavior_Right = handBehavior;
-    }
+        //behavior_Left = handBehavior;
+        //behavior_Right = handBehavior;
 
-    private void SetupEquipment()
-    {
-        if (item_Left == null) { item_Left = defaultHand; }
-        if (item_Right == null) { item_Right = defaultHand; }
+        left_Item.Assign(defaultHand, handBehavior);
+        right_Item.Assign(defaultHand, handBehavior);
     }
 
     private void Update()
@@ -66,14 +63,10 @@ public class ItemHandler : MonoBehaviour
     #endregion
 
     #region Hands
-    private void CheckLeftInput(bool active)
-    {
-        HandleHandInput(active, true);
-    }
 
-    private void CheckRightInput(bool active)
+    private void CheckHandInput(bool isLeft, bool active)
     {
-        HandleHandInput(active, false);
+        HandleHandInput(active, isLeft);
     }
 
     private void HandleHandInput(bool active, bool isLeft)
@@ -91,18 +84,18 @@ public class ItemHandler : MonoBehaviour
             if (isLeft)
             {
                 if (input_left_waitingToBeFired) // Tap
-                { behavior_Left.Handle_Tap(true); }
+                { left_Item.behavior.Handle_Tap(true); }
                 else // Release
-                { behavior_Left.Handle_Release(true); }
+                { left_Item.behavior.Handle_Release(true); }
 
                 input_left_waitingToBeFired = false;
             }
             else
             {
                 if (input_right_waitingToBeFired) // Tap
-                { behavior_Right.Handle_Tap(false); }
+                { right_Item.behavior.Handle_Tap(false); }
                 else // Release
-                { behavior_Right.Handle_Release(false); }
+                { right_Item.behavior.Handle_Release(false); }
 
                 input_right_waitingToBeFired = false;
             }
@@ -118,7 +111,7 @@ public class ItemHandler : MonoBehaviour
             if (left_pressdownTime >= itemInputHoldThreshold)
             {
                 // Activate hold
-                behavior_Left.Handle_Hold(true);
+                left_Item.behavior.Handle_Hold(true);
                 input_left_waitingToBeFired = false;
             }
         }
@@ -129,15 +122,17 @@ public class ItemHandler : MonoBehaviour
             if (right_pressdownTime >= itemInputHoldThreshold)
             {
                 // Activate hold
-                behavior_Right.Handle_Hold(false);
+                left_Item.behavior.Handle_Hold(false);
                 input_right_waitingToBeFired = false;
             }
         }
     }
     #endregion
 
-    #region Items
-    public void EquipItem(ItemObject stats, bool isLeft)
+    #region Item Handling
+
+    #region Old?
+    public void EquipItem(ItemData stats, bool isLeft)
     {
         // Change behavior
         switch (stats.type)
@@ -159,8 +154,87 @@ public class ItemHandler : MonoBehaviour
 
     private ref ItemBehavior GetHand(bool isLeft)
     {
-        if (isLeft) { return ref behavior_Left; }
-        else { return ref behavior_Right; }
+        //if (isLeft) { return ref behavior_Left; }
+        //else { return ref behavior_Right; }
+
+        if (isLeft) { return ref left_Item.behavior; }
+        else { return ref right_Item.behavior; }
+    }
+
+    private ref ItemInUse GetItem(bool isLeft)
+    {
+        if (isLeft) { return ref left_Item; }
+        else { return ref right_Item; }
     }
     #endregion
+
+    private void CheckPickupDropInput(bool isLeft, bool value)
+    {
+        // For now, just check the input as bool, check HOLDING status later
+
+        if (value == true)
+        {
+            PickupDropItem(isLeft);
+        }
+    }
+
+    private void PickupDropItem(bool isLeft)
+    {
+        // Check if currently holding an item
+        if (GetItem(isLeft).data == defaultHand)
+        {
+            PickupItem(isLeft);
+        }
+        else
+        {
+            // Try to drop item your holding
+            Debug.Log("Dropping item");
+        }
+    }
+
+    private void PickupItem(bool isLeft)
+    {
+        // Check if looking at an item in world
+        if (true)
+        {
+            Debug.Log("Picking up item");
+        }
+        else
+        {
+            Debug.Log("Nothing to pickup.");
+        }
+    }
+
+
+    private void EquipItem(bool isLeft)
+    {
+        // Check if currently holding an item
+        if (GetItem(isLeft).data == defaultHand)
+        {
+            Debug.Log("Nothing to equip.");
+        }
+        else
+        {
+            Debug.Log("Equipping " + GetItem(isLeft).data.name);
+        }
+    }
+
+    #endregion
+}
+
+[System.Serializable]
+public class ItemInUse
+{
+    public ItemData data;
+
+    // Condition
+
+    // Behavior
+    public ItemBehavior behavior;
+
+    public void Assign(ItemData _data, ItemBehavior _behavior)
+    {
+        data = _data;
+        behavior = _behavior;
+    }
 }

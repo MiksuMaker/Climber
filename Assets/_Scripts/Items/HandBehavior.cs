@@ -13,15 +13,11 @@ public class HandBehavior : ItemBehavior
 
     public override void Handle_Hold(bool isLeft)
     {
-        //Debug.Log("Hold");
-
         handler.grabber.UpdateHandGrabbing(true, isLeft);
     }
 
     public override void Handle_Release(bool isLeft)
     {
-        //Debug.Log("Release");
-
         handler.grabber.UpdateHandGrabbing(false, isLeft);
     }
 }

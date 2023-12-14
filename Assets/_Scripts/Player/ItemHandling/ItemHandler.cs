@@ -193,7 +193,7 @@ public class ItemHandler : MonoBehaviour
         {
             // Try to drop item your holding
             //Debug.Log("Dropping item");
-            GetItem(isLeft).Assign(defaultHand, GetBehavior(defaultHand));
+            DropItem(isLeft);
         }
     }
 
@@ -219,7 +219,19 @@ public class ItemHandler : MonoBehaviour
 
     }
 
+    private void DropItem(bool isLeft)
+    {
+        Vector3 dropPos = transform.position;
 
+        // Drop the item
+        GameObject item = Instantiate(Resources.Load("ItemInWorld"), dropPos, Quaternion.identity, null) as GameObject;
+        item.GetComponent<ItemInWorld>().AssignItem(GetItem(isLeft).data);
+        
+
+
+        // Reassign hand as object
+        GetItem(isLeft).Assign(defaultHand, GetBehavior(defaultHand));
+    }
 
     private void EquipItem(bool isLeft)
     {

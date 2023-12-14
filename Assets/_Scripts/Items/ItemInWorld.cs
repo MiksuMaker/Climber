@@ -7,11 +7,16 @@ public class ItemInWorld : MonoBehaviour
     #region Properties
     [SerializeField]
     //[OnChangedCall("UpdateItem")]
-    ItemData data;
+    public ItemData data;
     #endregion
 
     #region Setup
-    
+    public void AssignItem(ItemData newData)
+    {
+        data = newData;
+
+        UpdateItem();
+    }
     #endregion
 
     #region Functions
@@ -32,7 +37,6 @@ public class ItemInWorld : MonoBehaviour
         if (transform.childCount > 0)
         {
             DestroyImmediate(transform.GetChild(0).gameObject);
-            //Destroy(transform.GetChild(0).gameObject);
         }
 
         Instantiate(data.graphics, this.transform);

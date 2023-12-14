@@ -7,6 +7,8 @@ public class ItemHandler : MonoBehaviour
     #region Properties
     [HideInInspector]
     public Grabber grabber;
+    [HideInInspector]
+    public PlayerLooker looker;
 
     [SerializeField] HandData defaultHand;
 
@@ -132,24 +134,26 @@ public class ItemHandler : MonoBehaviour
     #region Item Handling
 
     #region Old?
-    public void EquipItem(ItemData stats, bool isLeft)
+    public ItemBehavior GetBehavior(ItemData stats)
     {
         // Change behavior
         switch (stats.type)
         {
             case ItemType.hand:
-                GetHand(isLeft) = handBehavior;
+                //GetHand(isLeft) = handBehavior;
+                return handBehavior;
                 break;
             // ================
 
-            case ItemType.meleeWeapon:
+            //case ItemType.meleeWeapon:
+            //    return
+            //    break;
+            // ================
 
-                break;
-                // ================
+            default:
+                Debug.Log("Behavior for this type has not been implemented yet!");
+                return handBehavior;
         }
-
-        // Update stats
-        GetHand(isLeft).Equip(isLeft, stats);
     }
 
     private ref ItemBehavior GetHand(bool isLeft)
@@ -195,15 +199,36 @@ public class ItemHandler : MonoBehaviour
     private void PickupItem(bool isLeft)
     {
         // Check if looking at an item in world
-        if (true)
+        //ItemData item = CheckForItems();
+        //if (item != null)
+        //{
+        //    Debug.Log("Picking up item");
+        //}
+        //else
+        //{
+        //    Debug.Log("Nothing to pickup.");
+        //}
+
+        LayerMask itemLayerMask = LayerMask.GetMask("Item");
+
+        (Vector3, Vector3) look = looker.GetLookStats();
+
+        Ray ray = new Ray(look.Item1, look.Item2);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, defaultHand.grabDistance, itemLayerMask))
         {
-            Debug.Log("Picking up item");
+            // Put the item on hand
+            ItemData data = hit.collider.gameObject.GetComponent<ItemInWorld>().GetPickedUp();
+
+            GetItem(isLeft).Assign(data, GetBehavior(data));
         }
         else
         {
-            Debug.Log("Nothing to pickup.");
+            Debug.Log("No items found.");
         }
+
     }
+
 
 
     private void EquipItem(bool isLeft)
@@ -232,9 +257,14 @@ public class ItemInUse
     // Behavior
     public ItemBehavior behavior;
 
+    public GameObject graphics;
+
     public void Assign(ItemData _data, ItemBehavior _behavior)
     {
         data = _data;
         behavior = _behavior;
+
+        // Update graphics
+        graphics = _data.graphics;
     }
 }

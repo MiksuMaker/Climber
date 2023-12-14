@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Scriptable Objects/HandObject")]
+[CreateAssetMenu(menuName = "Scriptable Objects/Item Data/Hand")]
 public class HandData : ItemData
 {
     [Header("Grabbing")]

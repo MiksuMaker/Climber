@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bde2e850d67b9c40af5102ca8808ead, type: 3}
   m_Name: Hand Basic
   m_EditorClassIdentifier: 
+  type: 0
+  graphics: {fileID: 6846403162465128039, guid: 84ca610760d160a4b9d629ff379ab90f,
+    type: 3}
   grabDistance: 4
   handGraphics: {fileID: 6846403162465128039, guid: 84ca610760d160a4b9d629ff379ab90f,
     type: 3}

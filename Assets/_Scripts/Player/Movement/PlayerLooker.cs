@@ -63,4 +63,8 @@ public class PlayerLooker : MonoBehaviour
     }
     #endregion
 
+    public (Vector3, Vector3) GetLookStats()
+    {
+        return (head.transform.position, head.transform.forward);
+    }
 }

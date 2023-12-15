@@ -7,6 +7,10 @@ public class HandAnimator : MonoBehaviour
     #region Properties
     public Transform HandPos_L;
     public Transform HandPos_R;
+
+    [Header("Animations")]
+    [SerializeField]
+    Animator handAnimator_R;
     #endregion
 
     #region Setup

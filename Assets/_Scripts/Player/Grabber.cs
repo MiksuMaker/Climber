@@ -192,6 +192,7 @@ public class Hand
     public Vector3 grabNormal;
     public GameObject graphics = null;
     public bool isLeftHand = true;
+    Transform parent;
 
     // Animation
     Grabber grabber;
@@ -204,7 +205,9 @@ public class Hand
         graphics = GameObject.Instantiate(handGraphics);
         graphics.transform.position = (isLeft ? g.idleHandPos_L : g.idleHandPos_R).position;
         graphics.transform.rotation = (isLeft ? g.idleHandPos_L : g.idleHandPos_R).rotation;
-        graphics.transform.parent = g.transform;
+        //graphics.transform.parent = g.transform;
+        parent = (isLeft ? g.idleHandPos_L : g.idleHandPos_R);
+        graphics.transform.parent = parent;
     }
 
     public void PlaceHand(Vector3 placementPos, Vector3 normal)
@@ -338,7 +341,8 @@ public class Hand
         else
         {
             graphics.transform.position = (isLeftHand ? grabber.idleHandPos_L : grabber.idleHandPos_R).position;
-            graphics.transform.parent = grabber.transform;
+            //graphics.transform.parent = grabber.transform;
+            graphics.transform.parent = parent;
         }
     }
     #endregion

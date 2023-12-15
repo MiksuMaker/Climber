@@ -12,4 +12,10 @@ public class ItemSlot : MonoBehaviour
     {
         text.text = newText;
     }
+
+    public void UpdateSelectedStatus(bool selected)
+    {
+        if (selected) { text.fontStyle = FontStyle.Bold; }
+        else { text.fontStyle = FontStyle.Normal; }
+    }
 }

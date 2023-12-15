@@ -7,17 +7,24 @@ public class PlayerInputObject : ScriptableObject
 {
     //  Delegates and Events
     public delegate void IntegerUpdate(int value);
-    public IntegerUpdate sensitivityUpdate;
+
     public delegate void BoolUpdate(bool value);
     public delegate void SidedBoolUpdate(bool isLeft, bool value);
-    public SidedBoolUpdate leftHandUpdate;
-    public SidedBoolUpdate rightHandUpdate;
 
     public delegate void ButtonEvent();
     public delegate void SidedButtonEvent(bool isLeft);
+
+    public IntegerUpdate sensitivityUpdate;
+
+    public SidedBoolUpdate leftHandUpdate;
+    public SidedBoolUpdate rightHandUpdate;
+
     public SidedBoolUpdate rightPickupItemUpdate;
     public SidedButtonEvent rightEquipItemEvent;
 
+    public IntegerUpdate mouseWheelUpdate;
+
+    // ===      VALUES      ===
 
     public Vector2 moveValue = Vector3.zero;
     public Vector2 lookValue = Vector2.zero;
@@ -38,8 +45,7 @@ public class PlayerInputObject : ScriptableObject
     public bool RightEquipInput { get { return rightEquipInput; } set { if (value == true) { rightEquipItemEvent?.Invoke(false); } rightEquipInput = false; } }
     private bool rightEquipInput = false;
 
-    public int MouseDelta = 0;
-    //public int MouseDelta { get { return MouseDelta; } set { if (value != 0) {  } }
+    public int MouseDelta { get { return MouseDelta; } set { if (value != 0) { mouseWheelUpdate?.Invoke(value); } } }
 
     public int sensitivityInput { set { sensitivityUpdate?.Invoke(value); } }
 }

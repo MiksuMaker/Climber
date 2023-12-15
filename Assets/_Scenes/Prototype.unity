@@ -645,7 +645,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3063bd5e31ee3dc4db81fd12b6090b4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  input: {fileID: 11400000, guid: 9d5db5b7c9c68414b9588e7937733849, type: 2}
   hotBarSize: 3
+  currentHotbarSlot: 0
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0

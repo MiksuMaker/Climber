@@ -7,11 +7,14 @@ public class PlayerInventory : MonoBehaviour
     #region Properties
     GameObject playerGO;
     ItemHandler itemHandler;
+    [SerializeField]
+    PlayerInputObject input;
 
     PlayerInventory_UI ui;
 
     [Header("Hotbar")]
     [SerializeField] int hotBarSize = 3;
+    [SerializeField] int currentHotbarSlot = 0;
     #endregion
 
     #region Setup
@@ -22,6 +25,8 @@ public class PlayerInventory : MonoBehaviour
 
         ui = FindObjectOfType<PlayerInventory_UI>();
 
+        input.mouseWheelUpdate += UpdateHotbarSelection;
+
         SetupHotbar();
     }
 
@@ -31,11 +36,17 @@ public class PlayerInventory : MonoBehaviour
     }
     #endregion
 
-    #region Item Handling
-    private void FixedUpdate()
+    #region Inputs
+    private void UpdateHotbarSelection(int change)
     {
-        Debug.Log("Continue: Set MouseDelta to have delegate event when mouseDelta changes");
+        currentHotbarSlot += change;
+
+        if (currentHotbarSlot < 0) { currentHotbarSlot = hotBarSize - 1; }
+        else if (currentHotbarSlot >= hotBarSize) { currentHotbarSlot = 0; }
+
+        ui.UpdateSelectedSlot(currentHotbarSlot);
     }
 
+    //private void
     #endregion
 }

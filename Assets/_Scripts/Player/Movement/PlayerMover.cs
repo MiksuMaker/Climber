@@ -11,6 +11,7 @@ public class PlayerMover : MonoBehaviour
     [HideInInspector]
     public Grabber grabber;
     public Rigidbody rb;
+    HandAnimator handAnimator;
 
     //[HideInInspector]
     [Header("Current Velocities")]
@@ -40,6 +41,7 @@ public class PlayerMover : MonoBehaviour
 
         // Fetch references
         rb = GetComponent<Rigidbody>();
+        handAnimator = GetComponent<HandAnimator>();
         SetupMovementModes();
     }
 
@@ -68,7 +70,8 @@ public class PlayerMover : MonoBehaviour
     #region Movement
     private void HandleMovement(Vector2 moveInput)
     {
-        //if (moveInput == Vector2.zero) { return; }
+        if (moveInput == Vector2.zero) 
+        { handAnimator.ChangeBothAnimationStates(HandAnimation.idle); }
 
         currentMode.Move(moveInput);
     }
@@ -83,6 +86,7 @@ public class PlayerMover : MonoBehaviour
         {
             case MoveType.walking:
                 currentMode = walkingMode;
+                handAnimator.ChangeBothAnimationStates(HandAnimation.walk);
                 break;
             case MoveType.climbing:
                 currentMode = climbingMode;

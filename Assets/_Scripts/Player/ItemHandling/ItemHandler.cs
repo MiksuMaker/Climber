@@ -280,6 +280,12 @@ public class ItemHandler : MonoBehaviour
         }
     }
 
+    public bool CheckIfHoldingItem(bool isLeft)
+    {
+        if (GetHand(isLeft).data.type == ItemType.hand)
+        { return false; } else { return true; }
+    }
+
     #endregion
 
     public void ChangeItemGraphics(bool isLeft, ItemData data)

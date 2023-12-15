@@ -181,6 +181,12 @@ public class Grabber : MonoBehaviour
         current = coroutine;
         StartCoroutine(current);
     }
+
+    public void ToggleHandVisibility(bool isLeft, bool onOff)
+    {
+        if (isLeft) { leftHand.ToggleHandVisibility(onOff); }
+        else { rightHand.ToggleHandVisibility(onOff); }
+    }
     #endregion
 
 }
@@ -242,6 +248,12 @@ public class Hand
         // If grabbing, destroy the spring
         grabber.OnRelease?.Invoke(isLeftHand);
 
+    }
+
+    public void ToggleHandVisibility(bool onOff)
+    {
+        if (onOff) { graphics.SetActive(true); }
+        else { graphics.SetActive(false); }
     }
 
     #region Animation

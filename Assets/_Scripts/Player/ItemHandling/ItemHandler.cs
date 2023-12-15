@@ -233,8 +233,6 @@ public class ItemHandler : MonoBehaviour
         GameObject item = Instantiate(Resources.Load("ItemInWorld"), dropPos, Quaternion.identity, null) as GameObject;
         item.GetComponent<ItemInWorld>().AssignItem(GetHand(isLeft).data);
 
-
-
         // Reassign hand as object
         GetHand(isLeft).Assign(defaultHand, GetBehavior(defaultHand));
     }
@@ -286,6 +284,21 @@ public class ItemHandler : MonoBehaviour
 
     public void ChangeItemGraphics(bool isLeft, ItemData data)
     {
+        // PLACEHOLDER CODE
+
+        // Needs to be changed so that both systems don't use
+        // duplicate systems
+
+        if (data.type == ItemType.hand)
+        {
+            // Update Grabber graphics
+            grabber.ToggleHandVisibility(isLeft, true);
+        }
+        else
+        {
+            grabber.ToggleHandVisibility(isLeft, false);
+        }
+
         handAnimator.ChangeItemGraphics(isLeft, data);
     }
 }

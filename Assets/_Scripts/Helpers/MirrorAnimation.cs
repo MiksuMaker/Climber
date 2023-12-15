@@ -1,26 +1,38 @@
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class MirrorAnimation : MonoBehaviour
 {
-    public Animator animator; // Reference to the Animator component
+    //public Animator animator; // Reference to the Animator component
+
+    //public Animation animation;
+    public List<AnimationClip> animations = new List<AnimationClip>();
 
     public string fileAddress = "Assets/Animations/xTest/Hand/";
 
-    //void Start()
-    //{
-    //    MirrorAnimationClip();
-    //}
+    [ContextMenu("Clear Animations")]
+    public void ClearAnimations()
+    {
+        animations.Clear();
+    }
 
     [ContextMenu("Mirror the animation clip")]
     void MirrorAnimationClip()
     {
-        AnimatorClipInfo[] clips = animator.GetCurrentAnimatorClipInfo(0); // Get the current animation clip
+        //AnimatorClipInfo[] clips = animator.GetCurrentAnimatorClipInfo(0); // Get the current animation clip
 
-        foreach (var clipInfo in clips)
+        //AnimatorClipInfo[] clips = animation.
+
+        //AnimationClip clip = animation.clip;
+
+        if (animations.Count == 0) { return; }
+
+        //foreach (var clipInfo in clips)
+        foreach (var animation in animations)
         {
-            AnimationClip originalClip = clipInfo.clip;
+            AnimationClip originalClip = animation;
 
             // Duplicate the original animation clip
             AnimationClip mirroredClip = new AnimationClip();
@@ -61,7 +73,14 @@ public class MirrorAnimation : MonoBehaviour
 
             int round = 0;
             //int[] bannedRounds = new int[] { };
-            int[] allowedRounds = new int[] { 0 };
+            int[] allowedRounds = new int[] { 
+                                                0,  // X pos
+                                                //1,  // Y pos
+                                                //2,  // Z pos
+                                                //3,  //      X rot
+                                                4,  //      Y rot
+                                                5,  //      Z rot
+            };
 
             // Mirror the animation curves
             foreach (var binding in AnimationUtility.GetCurveBindings(originalClip))
@@ -72,43 +91,19 @@ public class MirrorAnimation : MonoBehaviour
 
                 //if (round != 0) { continue; }
                 //if (bannedRounds.Contains(round)) { continue; }
-                if (!allowedRounds.Contains(round)) { continue; }
 
                 for (int i = 0; i < keys.Length; i++)
                 {
-                    #region Old Shitshow
-                    //Debug.Log(keys.Length);
 
-                    // Stop altering for other than X values
-                    //if (i >= keys.Length / 3)
-                    //{
-                    //    Debug.Log("NUMBER (" + i + ") B_______: " + keys[i].value.ToString() +
-                    //              " || A____: " + (keys[i].value).ToString());
-                    //    continue;
-                    //}
-                    //else
-                    //{
-                    //    Debug.Log("NUMBER (" + i + ") BEFORE: " + keys[i].value.ToString() +
-                    //              " || AFTER: " + (-keys[i].value).ToString());
-
-                    //}
-
-                    //keys[i].time = originalClip.length - keys[i].time;
-                    //keys[i].inTangent = -keys[i].inTangent;
-                    //keys[i].outTangent = -keys[i].outTangent;
-
-                    //keys[i].value = -keys[i].value;
-                    //keys[i].value
-
-                    //curve.MoveKey((i, curve.keys[i]));
-
-                    //keys[i].value = -keys[i].value;
-
-                    //Debug.Log("Keyvalue: " + keys[i].value.ToString());
-                    #endregion
-
-
-                    keys[i].value = -keys[i].value;
+                    if (!allowedRounds.Contains(round))
+                    {
+                        //continue;
+                        keys[i].value = keys[i].value;
+                    }
+                    else
+                    {
+                        keys[i].value = -keys[i].value;
+                    }
                 }
 
                 AnimationUtility.SetEditorCurve(mirroredClip, binding, new AnimationCurve(keys));

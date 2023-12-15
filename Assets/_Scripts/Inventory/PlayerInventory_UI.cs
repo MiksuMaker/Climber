@@ -48,5 +48,17 @@ public class PlayerInventory_UI : MonoBehaviour
             }
         }
     }
+
+    public void UpdateItemSlot(int selectedSlot, ItemData data)
+    {
+        // Change name
+        string slotText;
+
+        if (data == null) { slotText = "Empty"; }
+        else if (data.type == ItemType.hand) { slotText = "Empty"; }
+        else { slotText = data.name; }
+
+        hotbarSlots[selectedSlot].UpdateText(slotText);
+    }
     #endregion
 }

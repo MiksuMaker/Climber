@@ -9,6 +9,7 @@ public class ItemHandler : MonoBehaviour
     public Grabber grabber;
     [HideInInspector]
     public PlayerLooker looker;
+    PlayerInventory inventory;
 
     [SerializeField] HandData defaultHand;
 
@@ -35,6 +36,7 @@ public class ItemHandler : MonoBehaviour
     {
         grabber = GetComponent<Grabber>();
         looker = GetComponent<PlayerLooker>();
+        inventory = FindObjectOfType<PlayerInventory>();
 
         input.leftHandUpdate += CheckHandInput;
         input.rightHandUpdate += CheckHandInput;
@@ -156,16 +158,16 @@ public class ItemHandler : MonoBehaviour
         }
     }
 
-    private ref ItemBehavior GetHand(bool isLeft)
-    {
-        //if (isLeft) { return ref behavior_Left; }
-        //else { return ref behavior_Right; }
+    //private ref ItemBehavior GetHand(bool isLeft)
+    //{
+    //    //if (isLeft) { return ref behavior_Left; }
+    //    //else { return ref behavior_Right; }
 
-        if (isLeft) { return ref left_Item.behavior; }
-        else { return ref right_Item.behavior; }
-    }
+    //    if (isLeft) { return ref left_Item.behavior; }
+    //    else { return ref right_Item.behavior; }
+    //}
 
-    private ref ItemInUse GetItem(bool isLeft)
+    private ref ItemInUse GetHand(bool isLeft)
     {
         if (isLeft) { return ref left_Item; }
         else { return ref right_Item; }
@@ -185,7 +187,7 @@ public class ItemHandler : MonoBehaviour
     private void PickupDropItem(bool isLeft)
     {
         // Check if currently holding an item
-        if (GetItem(isLeft).data == defaultHand)
+        if (GetHand(isLeft).data == defaultHand)
         {
             PickupItem(isLeft);
         }
@@ -210,7 +212,7 @@ public class ItemHandler : MonoBehaviour
             // Put the item on hand
             ItemData data = hit.collider.gameObject.GetComponent<ItemInWorld>().GetPickedUp();
 
-            GetItem(isLeft).Assign(data, GetBehavior(data));
+            GetHand(isLeft).Assign(data, GetBehavior(data));
         }
         else
         {
@@ -225,24 +227,52 @@ public class ItemHandler : MonoBehaviour
 
         // Drop the item
         GameObject item = Instantiate(Resources.Load("ItemInWorld"), dropPos, Quaternion.identity, null) as GameObject;
-        item.GetComponent<ItemInWorld>().AssignItem(GetItem(isLeft).data);
-        
+        item.GetComponent<ItemInWorld>().AssignItem(GetHand(isLeft).data);
+
 
 
         // Reassign hand as object
-        GetItem(isLeft).Assign(defaultHand, GetBehavior(defaultHand));
+        GetHand(isLeft).Assign(defaultHand, GetBehavior(defaultHand));
     }
 
     private void EquipItem(bool isLeft)
     {
         // Check if currently holding an item
-        if (GetItem(isLeft).data == defaultHand)
+        if (GetHand(isLeft).data == defaultHand)
         {
-            Debug.Log("Nothing to equip.");
+            // NOT HOLDING AN ITEM --> Check selected hotbar slot for items
+
+            if (inventory.DoesItemSlotHaveItem())
+            {
+                // Equip it into the hand
+                ItemData wantedItem = inventory.GetItem();
+                GetHand(isLeft).Assign(wantedItem, GetBehavior(wantedItem));
+            }
+            else
+            {
+                Debug.Log("Nothing to equip.");
+            }
         }
         else
         {
-            Debug.Log("Equipping " + GetItem(isLeft).data.name);
+            // HOLDING AN ITEM --> Put it into the selected slot
+
+            // ---> Check first if there is an item there
+            //      ---> If so, swap them
+            if (inventory.DoesItemSlotHaveItem())
+            {
+                // Swap them
+                Debug.Log("Swapping not yet implemented.");
+            }
+            else
+            {
+                // Just place it into hotbar
+                inventory.UpdateCurrentItemSlot(GetHand(isLeft).data);
+
+                // Remove it from hand
+                GetHand(isLeft).Assign(defaultHand, GetBehavior(defaultHand));
+            }
+
         }
     }
 

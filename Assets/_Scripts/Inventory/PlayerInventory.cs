@@ -15,6 +15,8 @@ public class PlayerInventory : MonoBehaviour
     [Header("Hotbar")]
     [SerializeField] int hotBarSize = 3;
     [SerializeField] int currentHotbarSlot = 0;
+    //List<ItemData> itemsInHotbar = new List<ItemData>();
+    ItemData[] itemsInHotbar;
     #endregion
 
     #region Setup
@@ -33,6 +35,8 @@ public class PlayerInventory : MonoBehaviour
     private void SetupHotbar()
     {
         ui.SetupHotbarUI(hotBarSize);
+
+        itemsInHotbar = new ItemData[hotBarSize];
     }
     #endregion
 
@@ -47,6 +51,40 @@ public class PlayerInventory : MonoBehaviour
         ui.UpdateSelectedSlot(currentHotbarSlot);
     }
 
-    //private void
+    public void UpdateCurrentItemSlot(ItemData data)
+    {
+        // Update the actual item
+        itemsInHotbar[currentHotbarSlot] = data;
+
+        // Update UI
+        ui.UpdateItemSlot(currentHotbarSlot, data);
+    }
+
+    public bool DoesItemSlotHaveItem()
+    {
+        if (itemsInHotbar[currentHotbarSlot] != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public ItemData GetItem(bool andRemoveFromInventory = true)
+    {
+        ItemData wantedItem = itemsInHotbar[currentHotbarSlot];
+
+        if (andRemoveFromInventory)
+        {
+            itemsInHotbar[currentHotbarSlot] = null;
+
+            // Update UI
+            UpdateCurrentItemSlot(null);
+        }
+
+        return wantedItem;
+    }
     #endregion
 }

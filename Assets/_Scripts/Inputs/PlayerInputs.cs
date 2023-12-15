@@ -99,22 +99,13 @@ public class PlayerInputs : MonoBehaviour
 
     }
 
-    //private bool NewBool(bool desiredValue, bool currentValue)
-    //{
-    //    if (currentValue != desiredValue)
-    //    {
-    //        return desiredValue;
-    //    }
-    //    // Otherwise, don't update it needlessly
-
-    //}
-
     private void HandleInventoryInput()
     {
         if (Input.mouseScrollDelta.y != 0f) { inputComponent.MouseDelta = (int)Input.mouseScrollDelta.y; }
 
         if (Input.GetKeyDown(pickDropThrow_Left)) { inputComponent.RightPickupInput = true; } 
         else if (Input.GetKeyUp(pickDropThrow_Left)) { inputComponent.RightPickupInput = false; }
+
         if (Input.GetKeyDown(equipUnequip_Left)) { inputComponent.RightEquipInput = true; }
     }
 

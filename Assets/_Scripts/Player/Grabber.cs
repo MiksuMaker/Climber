@@ -212,6 +212,7 @@ public class Hand
         graphics.transform.position = (isLeft ? g.idleHandPos_L : g.idleHandPos_R).position;
         graphics.transform.rotation = (isLeft ? g.idleHandPos_L : g.idleHandPos_R).rotation;
         //graphics.transform.parent = g.transform;
+        if (!isLeft) { graphics.transform.localScale = new Vector3(-1f, 1f, 1f); }
         parent = (isLeft ? g.idleHandPos_L : g.idleHandPos_R);
         graphics.transform.parent = parent;
     }

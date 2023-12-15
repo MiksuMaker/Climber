@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 public class ItemHandler : MonoBehaviour
@@ -10,6 +12,7 @@ public class ItemHandler : MonoBehaviour
     [HideInInspector]
     public PlayerLooker looker;
     PlayerInventory inventory;
+    HandAnimator handAnimator;
 
     [SerializeField] HandData defaultHand;
 
@@ -37,6 +40,7 @@ public class ItemHandler : MonoBehaviour
         grabber = GetComponent<Grabber>();
         looker = GetComponent<PlayerLooker>();
         inventory = FindObjectOfType<PlayerInventory>();
+        handAnimator = GetComponent<HandAnimator>();
 
         input.leftHandUpdate += CheckHandInput;
         input.rightHandUpdate += CheckHandInput;
@@ -51,8 +55,8 @@ public class ItemHandler : MonoBehaviour
 
     private void SetupInitialItems()
     {
-        left_Item = new ItemInUse();
-        right_Item = new ItemInUse();
+        left_Item = new ItemInUse(this, true);
+        right_Item = new ItemInUse(this, false);
 
         handBehavior = new HandBehavior(this);
 
@@ -279,11 +283,19 @@ public class ItemHandler : MonoBehaviour
     }
 
     #endregion
+
+    public void ChangeItemGraphics(bool isLeft, ItemData data)
+    {
+        handAnimator.ChangeItemGraphics(isLeft, data);
+    }
 }
 
-[System.Serializable]
+//[System.Serializable]
 public class ItemInUse
 {
+    ItemHandler handler;
+    bool isLeft;
+
     public ItemData data;
 
     // Condition
@@ -291,7 +303,13 @@ public class ItemInUse
     // Behavior
     public ItemBehavior behavior;
 
-    public GameObject graphics;
+    //public GameObject graphics;
+
+    public ItemInUse(ItemHandler handler_, bool isLeft_)
+    {
+        handler = handler_;
+        isLeft = isLeft_;
+    }
 
     public void Assign(ItemData _data, ItemBehavior _behavior)
     {
@@ -299,6 +317,8 @@ public class ItemInUse
         behavior = _behavior;
 
         // Update graphics
-        graphics = _data.graphics;
+        //if (graphics != null) { }
+        //graphics = _data.graphics;
+        handler.ChangeItemGraphics(isLeft, data);
     }
 }

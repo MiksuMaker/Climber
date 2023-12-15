@@ -8,6 +8,10 @@ public class HandAnimator : MonoBehaviour
     public Transform HandPos_L;
     public Transform HandPos_R;
 
+    [Header("Models")]
+    public GameObject itemGraphics_L;
+    public GameObject itemGraphics_R;
+
     [Header("Animations")]
     [SerializeField]
     Animator handAnimator_R;
@@ -18,6 +22,19 @@ public class HandAnimator : MonoBehaviour
     #endregion
 
     #region Functions
-
+    public void ChangeItemGraphics(bool isLeft, ItemData data)
+    {
+        if (isLeft)
+        {
+            if (itemGraphics_L != null) Destroy(itemGraphics_L);
+            itemGraphics_L = Instantiate(data.graphics, HandPos_L.transform.position, HandPos_L.transform.rotation, HandPos_L);
+        }
+        else
+        {
+            if (itemGraphics_R != null) Destroy(itemGraphics_R);
+            itemGraphics_R = Instantiate(data.graphics, HandPos_R.transform.position, HandPos_R.transform.rotation, HandPos_R);
+            itemGraphics_R.transform.localScale = new Vector3(-1, 1, 1);
+        }
+    }
     #endregion
 }

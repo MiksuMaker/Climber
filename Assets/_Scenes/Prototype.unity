@@ -1134,7 +1134,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
-  m_StartCorner: 1
+  m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 100, y: 100}
   m_Spacing: {x: -25, y: 0}
@@ -3147,6 +3147,7 @@ GameObject:
   - component: {fileID: 2108108904}
   - component: {fileID: 2108108905}
   - component: {fileID: 2108108906}
+  - component: {fileID: 2108108908}
   - component: {fileID: 2108108907}
   m_Layer: 10
   m_Name: Player
@@ -3257,8 +3258,6 @@ MonoBehaviour:
   handObject: {fileID: 11400000, guid: 129fd5d373922744d9b5c7b05d544cbb, type: 2}
   isClimbing: 0
   center: {x: 0, y: 0, z: 0}
-  idleHandPos_L: {fileID: 1131279282}
-  idleHandPos_R: {fileID: 735405370}
   beforeGrabPos_Length: 0.3
   overGrabPos_Height: 0.5
   grabbing_Time: 0.2
@@ -3337,6 +3336,20 @@ MonoBehaviour:
     graphics: {fileID: 0}
   input: {fileID: 11400000, guid: 9d5db5b7c9c68414b9588e7937733849, type: 2}
   itemInputHoldThreshold: 0.15
+--- !u!114 &2108108908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2108108899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ffee5b2e3b9c9b4b85ab5595714ae69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HandPos_L: {fileID: 1131279282}
+  HandPos_R: {fileID: 735405370}
 --- !u!1001 &185628145198814332
 PrefabInstance:
   m_ObjectHideFlags: 0

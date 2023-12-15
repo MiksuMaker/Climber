@@ -14,6 +14,7 @@ public class Grabber : MonoBehaviour
 
     [SerializeField]
     PlayerInputObject inputComponent;
+    HandAnimator handAnimator;
     [SerializeField] GameObject head;
     [SerializeField] GameObject crossHairObj;
 
@@ -21,9 +22,6 @@ public class Grabber : MonoBehaviour
 
     [Header("Grabbing")]
     [SerializeField] public HandData handObject;
-
-    //[SerializeField] GameObject handGraphics;
-    //[SerializeField] float grabDistance = 5f;
 
 
     bool raycastHitWithinReach = false;
@@ -39,13 +37,12 @@ public class Grabber : MonoBehaviour
     [HideInInspector]
     public Vector3 center = Vector3.zero;
 
+    [HideInInspector]
+    public Transform idleHandPos_L { get { return handAnimator.HandPos_L; } }
+    [HideInInspector]
+    public Transform idleHandPos_R { get { return handAnimator.HandPos_R; } }
+
     [Header("Hand placement")]
-    //[SerializeField] public Vector3 idleHandPos;
-    //[SerializeField] public float sidePos = 1f;
-
-    [SerializeField] public Transform idleHandPos_L;
-    [SerializeField] public Transform idleHandPos_R;
-
     public float beforeGrabPos_Length = 0.5f;
     public float overGrabPos_Height = 0.5f;
     public float grabbing_Time = 0.1f;
@@ -61,6 +58,8 @@ public class Grabber : MonoBehaviour
     #region Setup
     private void Start()
     {
+        handAnimator = GetComponent<HandAnimator>();
+
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
@@ -213,15 +212,9 @@ public class Hand
         isGrabbing = true;
         graphics.transform.parent = null;
 
-        // V1
-        //graphics.transform.position = placementPos;
-        //graphics.transform.rotation = CalcRotation(placementPos, normal);
-
         // V2
         grabPos = placementPos;
         grabNormal = normal;
-        //graphics.transform.position = placementPos;
-        //graphics.transform.rotation = CalcRotation(placementPos, normal);
         StartHandMovement(true);
 
         graphics.transform.localScale = isLeftHand ? new Vector3(1f, 1f, 1f) : new Vector3(-1f, 1f, 1f);

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Basic Sword
   m_EditorClassIdentifier: 
   type: 1
-  graphics: {fileID: 1722373624457098422, guid: 2884def2dd16c814f9c86ff2564839e3,
+  graphics: {fileID: 2099076425396485662, guid: 796b54e9ebf48a44d8a564fbc028bd88,
     type: 3}

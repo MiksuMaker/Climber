@@ -262,7 +262,9 @@ public class ItemHandler : MonoBehaviour
             if (inventory.DoesItemSlotHaveItem())
             {
                 // Swap them
-                Debug.Log("Swapping not yet implemented.");
+                ItemData wantedItem = inventory.GetItem();
+                inventory.UpdateCurrentItemSlot(GetHand(isLeft).data);
+                GetHand(isLeft).Assign(wantedItem, GetBehavior(wantedItem)); ;
             }
             else
             {

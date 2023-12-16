@@ -95,11 +95,21 @@ public class HandAnimator : MonoBehaviour
 
         //animationName += (isLeft ? "L" : "R");
 
-        (isLeft ? handAnimator_L : handAnimator_R).Play(animationName);
+        //(isLeft ? handAnimator_L : handAnimator_R).Play(animationName);
 
         //(isLeft ? handAnimator_L : handAnimator_R).CrossFade(animationName, 0.5f);
-        if (isLeft) { currentAnimationState_L = type; }
-        else { currentAnimationState_R = type; handAnimator_R.playbackTime = 0.5f; }
+        if (isLeft) 
+        {
+            //handAnimator_L.Play(animationName);
+            handAnimator_L.CrossFade(animationName, 0.5f);
+            currentAnimationState_L = type; 
+        }
+        else 
+        {
+            //handAnimator_R.Play(animationName, 0, 0.5f);
+            handAnimator_R.CrossFade(animationName, 0.5f, 0, 0.5f);
+            currentAnimationState_R = type; 
+        }
 
     }
     #endregion

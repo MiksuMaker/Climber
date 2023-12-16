@@ -31,6 +31,7 @@ public class PlayerMover : MonoBehaviour
     MovementMode jumpingMode;
     MovementMode fallingMode;
 
+    bool idle = true;
     #endregion
 
     #region Setup
@@ -70,10 +71,23 @@ public class PlayerMover : MonoBehaviour
     #region Movement
     private void HandleMovement(Vector2 moveInput)
     {
-        if (moveInput == Vector2.zero) 
-        { handAnimator.ChangeBothAnimationStates(HandAnimation.idle); }
+        CheckIfIdle(moveInput);
 
         currentMode.Move(moveInput);
+    }
+
+    private void CheckIfIdle(Vector2 moveInput)
+    {
+        if (!idle && moveInput == Vector2.zero)
+        {
+            idle = true;
+            handAnimator.ChangeBothAnimationStates(HandAnimation.idle);
+        }
+        else if (idle && moveInput != Vector2.zero)
+        {
+            idle = false;
+            handAnimator.ChangeBothAnimationStates(HandAnimation.walk);
+        }
     }
     #endregion
 
@@ -86,7 +100,6 @@ public class PlayerMover : MonoBehaviour
         {
             case MoveType.walking:
                 currentMode = walkingMode;
-                handAnimator.ChangeBothAnimationStates(HandAnimation.walk);
                 break;
             case MoveType.climbing:
                 currentMode = climbingMode;

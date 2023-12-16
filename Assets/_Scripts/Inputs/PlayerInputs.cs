@@ -16,8 +16,11 @@ public class PlayerInputs : MonoBehaviour
     KeyCode hand_Left = KeyCode.Mouse0;
     KeyCode hand_Right = KeyCode.Mouse1;
 
-    KeyCode pickDropThrow_Left = KeyCode.E;
-    KeyCode equipUnequip_Left = KeyCode.F;
+    KeyCode pickDropThrow_Left= KeyCode.Q;
+    KeyCode equipUnequip_Left = KeyCode.Tab;
+
+    KeyCode pickDropThrow_Right = KeyCode.E;
+    KeyCode equipUnequip_Right = KeyCode.F;
 
     KeyCode minus = KeyCode.KeypadMinus;
     KeyCode plus = KeyCode.KeypadPlus;
@@ -103,10 +106,13 @@ public class PlayerInputs : MonoBehaviour
     {
         if (Input.mouseScrollDelta.y != 0f) { inputComponent.MouseDelta = (int)Input.mouseScrollDelta.y; }
 
-        if (Input.GetKeyDown(pickDropThrow_Left)) { inputComponent.RightPickupInput = true; } 
-        else if (Input.GetKeyUp(pickDropThrow_Left)) { inputComponent.RightPickupInput = false; }
+        if (Input.GetKeyDown(pickDropThrow_Right)) { inputComponent.RightPickupInput = true; }
+        else if (Input.GetKeyUp(pickDropThrow_Right)) { inputComponent.RightPickupInput = false; }
+        if (Input.GetKeyDown(equipUnequip_Right)) { inputComponent.RightEquipInput = true; }
 
-        if (Input.GetKeyDown(equipUnequip_Left)) { inputComponent.RightEquipInput = true; }
+        if (Input.GetKeyDown(pickDropThrow_Left)) { inputComponent.LeftPickupInput = true; }
+        else if (Input.GetKeyUp(pickDropThrow_Left)) { inputComponent.LeftPickupInput = false; }
+        if (Input.GetKeyDown(equipUnequip_Left)) { inputComponent.LeftEquipInput = true; }
     }
 
     private void HandleOtherInput()

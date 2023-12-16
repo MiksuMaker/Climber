@@ -53,7 +53,11 @@ public class HandAnimator : MonoBehaviour
 
 
             if (data.type != ItemType.hand)
+            {
                 itemGraphics_L = Instantiate(data.graphics, HandPos_L.transform.position, HandPos_L.transform.rotation, HandPos_L);
+                itemGraphics_L.transform.localScale = new Vector3(-1, 1, 1);
+            }
+
         }
         else
         {
